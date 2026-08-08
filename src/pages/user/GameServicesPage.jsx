@@ -191,7 +191,7 @@ export const GameServicesPage = () => {
   return (
     <div className="space-y-6">
       {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 text-white overflow-hidden shadow-2xl">
+      <div className="relative p-6 sm:p-8 rounded-3xl bg-linear-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 text-white overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 space-y-3">
           <div className="flex flex-wrap items-center gap-2">

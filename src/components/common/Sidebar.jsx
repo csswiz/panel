@@ -52,12 +52,12 @@ export const Sidebar = ({ isOpen, onClose }) => {
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-30 bg-slate-950/70 backdrop-blur-sm md:hidden"
         />
       )}
 
       <aside
-        className={`fixed md:sticky top-0 md:top-24 h-screen md:h-[calc(100vh-6rem)] left-0 z-30 w-64 shrink-0 border-r border-slate-200/50 dark:border-slate-800/50 bg-white/92 dark:bg-slate-900/92 backdrop-blur-2xl flex flex-col justify-between transition-transform duration-300 md:translate-x-0 ${
+        className={`fixed md:sticky top-0 md:top-24 h-screen md:h-[calc(100vh-6rem)] left-0 z-40 w-64 shrink-0 border-r border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900 flex flex-col justify-between transition-transform duration-300 md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
