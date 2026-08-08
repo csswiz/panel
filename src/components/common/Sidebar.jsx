@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import {
   LayoutDashboard, ShoppingCart, Sparkles, ListOrdered, Wallet, Code2, Headphones,
-  Users, UserCheck, Shield, BarChart3, FileText, Settings, Layers, LogOut
+  Users, UserCheck, Shield, BarChart3, FileText, Settings, Layers, LogOut, Gamepad2
 } from "lucide-react";
 
 export const Sidebar = ({ isOpen, onClose }) => {
@@ -23,6 +23,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
     { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, exact: true },
     { label: "New Order", path: "/dashboard/new-order", icon: ShoppingCart, badge: "FAST" },
     { label: "Services", path: "/dashboard/services", icon: Sparkles, badge: "17,000+" },
+    { label: "Game Services", path: "/dashboard/game-services", icon: Gamepad2, badge: "HOT" },
     { label: "Orders History", path: "/dashboard/orders", icon: ListOrdered },
     { label: "Add Funds / Wallet", path: "/dashboard/wallet", icon: Wallet },
     { label: "API Docs", path: "/dashboard/api", icon: Code2 },
@@ -36,6 +37,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
     { label: "Analytics & Revenue", path: "/admin/analytics", icon: BarChart3 },
     { label: "User Directory", path: "/admin/users", icon: UserCheck, badge: "5,420" },
     { label: "Services Catalog", path: "/admin/services", icon: Layers },
+    { label: "Game Services Admin", path: "/admin/game-services", icon: Gamepad2, badge: "NEW" },
     { label: "Order Management", path: "/admin/orders", icon: ListOrdered },
     { label: "Support Queue", path: "/admin/tickets", icon: Headphones },
     { label: "Reports & Export", path: "/admin/reports", icon: FileText },

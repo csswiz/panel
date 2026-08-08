@@ -37,6 +37,7 @@ export const Select = forwardRef(({
               'focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 focus:bg-white dark:focus:bg-slate-900',
               'focus:shadow-[0_0_0_4px_rgba(99,102,241,0.08)]',
               'hover:border-slate-300 dark:hover:border-slate-700',
+              'custom-dropdown-scroll',
               Icon && 'pl-10',
               error && 'border-rose-500 focus:ring-rose-500/40 focus:border-rose-500',
               className

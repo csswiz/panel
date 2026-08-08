@@ -11,6 +11,7 @@ import { WalletProvider } from "./contexts/WalletContext";
 import { TicketsProvider } from "./contexts/TicketsContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import { ServicesProvider } from "./contexts/ServicesContext";
+import { GamingProvider } from "./contexts/GamingContext";
 
 // Layouts
 import { LandingLayout } from "./layouts/LandingLayout";
@@ -30,6 +31,7 @@ import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 import { UserDashboard } from "./pages/user/UserDashboard";
 import { NewOrderPage } from "./pages/user/NewOrderPage";
 import { ServicesMarketplace } from "./pages/user/ServicesMarketplace";
+import { GameServicesPage } from "./pages/user/GameServicesPage";
 import { OrdersPage } from "./pages/user/OrdersPage";
 import { WalletPage } from "./pages/user/WalletPage";
 import { APIDocsPage } from "./pages/user/APIDocsPage";
@@ -42,6 +44,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminAnalytics } from "./pages/admin/AdminAnalytics";
 import { UserManagementPage } from "./pages/admin/UserManagementPage";
 import { ServiceManagementPage } from "./pages/admin/ServiceManagementPage";
+import { AdminGamingManagement } from "./pages/admin/AdminGamingManagement";
 import { OrderManagementPage } from "./pages/admin/OrderManagementPage";
 import { FinancialsPage } from "./pages/admin/FinancialsPage";
 import { TicketsAdminPage } from "./pages/admin/TicketsAdminPage";
@@ -60,56 +63,60 @@ export default function App() {
             <TicketsProvider>
               <SettingsProvider>
                 <ServicesProvider>
-                  <ToastProvider>
-                    <CommandPaletteProvider>
-                      <BrowserRouter>
-                        <Routes>
-                          {/* Landing Website Routes */}
-                          <Route element={<LandingLayout />}>
-                            <Route path="/" element={<LandingPage />} />
-                          </Route>
+                  <GamingProvider>
+                    <ToastProvider>
+                      <CommandPaletteProvider>
+                        <BrowserRouter>
+                          <Routes>
+                            {/* Landing Website Routes */}
+                            <Route element={<LandingLayout />}>
+                              <Route path="/" element={<LandingPage />} />
+                            </Route>
 
-                          {/* Authentication UI Routes */}
-                          <Route path="/auth" element={<AuthLayout />}>
-                            <Route path="login" element={<LoginPage />} />
-                            <Route path="register" element={<RegisterPage />} />
-                            <Route path="forgot-password" element={<ForgotPasswordPage />} />
-                            <Route path="otp" element={<OTPVerifyPage />} />
-                            <Route path="reset-password" element={<ResetPasswordPage />} />
-                          </Route>
+                            {/* Authentication UI Routes */}
+                            <Route path="/auth" element={<AuthLayout />}>
+                              <Route path="login" element={<LoginPage />} />
+                              <Route path="register" element={<RegisterPage />} />
+                              <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                              <Route path="otp" element={<OTPVerifyPage />} />
+                              <Route path="reset-password" element={<ResetPasswordPage />} />
+                            </Route>
 
-                          {/* User Dashboard Routes */}
-                          <Route path="/dashboard" element={<UserDashboardLayout />}>
-                            <Route index element={<UserDashboard />} />
-                            <Route path="new-order" element={<NewOrderPage />} />
-                            <Route path="services" element={<ServicesMarketplace />} />
-                            <Route path="orders" element={<OrdersPage />} />
-                            <Route path="wallet" element={<WalletPage />} />
-                            <Route path="api" element={<APIDocsPage />} />
-                            <Route path="support" element={<SupportPage />} />
-                            <Route path="affiliate" element={<AffiliatePage />} />
-                            <Route path="profile" element={<ProfilePage />} />
-                          </Route>
+                            {/* User Dashboard Routes */}
+                            <Route path="/dashboard" element={<UserDashboardLayout />}>
+                              <Route index element={<UserDashboard />} />
+                              <Route path="new-order" element={<NewOrderPage />} />
+                              <Route path="services" element={<ServicesMarketplace />} />
+                              <Route path="game-services" element={<GameServicesPage />} />
+                              <Route path="orders" element={<OrdersPage />} />
+                              <Route path="wallet" element={<WalletPage />} />
+                              <Route path="api" element={<APIDocsPage />} />
+                              <Route path="support" element={<SupportPage />} />
+                              <Route path="affiliate" element={<AffiliatePage />} />
+                              <Route path="profile" element={<ProfilePage />} />
+                            </Route>
 
-                          {/* Admin Panel Routes */}
-                          <Route path="/admin" element={<AdminDashboardLayout />}>
-                            <Route index element={<AdminDashboard />} />
-                            <Route path="analytics" element={<AdminAnalytics />} />
-                            <Route path="users" element={<UserManagementPage />} />
-                            <Route path="services" element={<ServiceManagementPage />} />
-                            <Route path="orders" element={<OrderManagementPage />} />
-                            <Route path="financials" element={<FinancialsPage />} />
-                            <Route path="tickets" element={<TicketsAdminPage />} />
-                            <Route path="reports" element={<ReportsPage />} />
-                            <Route path="settings" element={<SettingsAdminPage />} />
-                          </Route>
+                            {/* Admin Panel Routes */}
+                            <Route path="/admin" element={<AdminDashboardLayout />}>
+                              <Route index element={<AdminDashboard />} />
+                              <Route path="analytics" element={<AdminAnalytics />} />
+                              <Route path="users" element={<UserManagementPage />} />
+                              <Route path="services" element={<ServiceManagementPage />} />
+                              <Route path="game-services" element={<AdminGamingManagement />} />
+                              <Route path="orders" element={<OrderManagementPage />} />
+                              <Route path="financials" element={<FinancialsPage />} />
+                              <Route path="tickets" element={<TicketsAdminPage />} />
+                              <Route path="reports" element={<ReportsPage />} />
+                              <Route path="settings" element={<SettingsAdminPage />} />
+                            </Route>
 
-                          {/* Fallback 404 Route */}
-                          <Route path="*" element={<NotFoundPage />} />
-                        </Routes>
-                      </BrowserRouter>
-                    </CommandPaletteProvider>
-                  </ToastProvider>
+                            {/* Fallback 404 Route */}
+                            <Route path="*" element={<NotFoundPage />} />
+                          </Routes>
+                        </BrowserRouter>
+                      </CommandPaletteProvider>
+                    </ToastProvider>
+                  </GamingProvider>
                 </ServicesProvider>
               </SettingsProvider>
             </TicketsProvider>

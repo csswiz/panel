@@ -7,7 +7,7 @@ import { Badge } from "../../components/ui/Badge";
 import { Modal } from "../../components/ui/Modal";
 import { formatCurrency } from "../../utils/formatters";
 import { useToast } from "../../contexts/ToastContext";
-import { Layers, Search, Edit3, Percent, ChevronLeft, ChevronRight, Save, Download, RefreshCw, Code2, Link2 } from "lucide-react";
+import { Layers, Search, Edit3, Percent, ChevronLeft, ChevronRight, Save, Download, RefreshCw, Code2, Link2, Plus } from "lucide-react";
 
 const ITEMS_PER_PAGE = 15;
 
@@ -21,6 +21,18 @@ export const ServiceManagementPage = () => {
   const [percentageIncrease, setPercentageIncrease] = useState(10);
   const [editingService, setEditingService] = useState(null);
   
+  // Add Service Modal State
+  const [addServiceModalOpen, setAddServiceModalOpen] = useState(false);
+  const [newServiceForm, setNewServiceForm] = useState({
+    name: "",
+    category: "",
+    newCategoryName: "",
+    rate: 1.50,
+    min: 100,
+    max: 10000,
+    status: "Active"
+  });
+
   // Import Modal State
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [importTab, setImportTab] = useState("api"); // "api" | "json"
@@ -31,6 +43,43 @@ export const ServiceManagementPage = () => {
   const [isFetching, setIsFetching] = useState(false);
 
   const { addToast } = useToast();
+
+  const categories = useMemo(() => {
+    return Array.from(new Set(services.map(s => s.category).filter(Boolean)));
+  }, [services]);
+
+  const handleCreateNewService = (e) => {
+    e.preventDefault();
+    const finalCategory = newServiceForm.category === "__NEW__"
+      ? newServiceForm.newCategoryName.trim()
+      : (newServiceForm.category || categories[0] || "General");
+
+    if (!newServiceForm.name.trim()) {
+      addToast("Please enter a valid Service Name!", "warning");
+      return;
+    }
+    if (!finalCategory) {
+      addToast("Please enter or select a Category!", "warning");
+      return;
+    }
+
+    const newId = Math.max(...services.map(s => s.id), 30000) + 1;
+    const createdService = {
+      id: newId,
+      name: newServiceForm.name.trim(),
+      category: finalCategory,
+      rate: parseFloat(newServiceForm.rate) || 1.00,
+      min: parseInt(newServiceForm.min) || 10,
+      max: parseInt(newServiceForm.max) || 10000,
+      status: "Active",
+      platform: finalCategory.toLowerCase().includes("instagram") ? "instagram" : "other"
+    };
+
+    bulkImportServices([createdService], false);
+    addToast(`New Service #${newId} '${createdService.name}' added to category '${finalCategory}'!`, "success");
+    setAddServiceModalOpen(false);
+    setNewServiceForm({ name: "", category: "", newCategoryName: "", rate: 1.50, min: 100, max: 10000, status: "Active" });
+  };
 
   const filteredServices = useMemo(() => {
     const q = search.toLowerCase();
@@ -235,11 +284,14 @@ export const ServiceManagementPage = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <Button variant="gradient" onClick={() => setAddServiceModalOpen(true)} className="gap-2 font-bold shadow-indigo-500/30">
+            <Plus className="w-4 h-4" /> Add Service / Category
+          </Button>
           <Button variant="outline" onClick={() => setImportModalOpen(true)} className="gap-2 font-bold">
             <Download className="w-4 h-4 text-emerald-500" /> Import Provider API Services
           </Button>
-          <Button variant="gradient" onClick={() => setMultiplierModalOpen(true)} className="gap-2 font-bold shadow-indigo-500/30">
-            <Percent className="w-4 h-4" /> Bulk Price Multiplier
+          <Button variant="outline" onClick={() => setMultiplierModalOpen(true)} className="gap-2 font-bold">
+            <Percent className="w-4 h-4 text-indigo-400" /> Bulk Price Multiplier
           </Button>
         </div>
       </div>
@@ -471,6 +523,95 @@ export const ServiceManagementPage = () => {
 
             <Button type="submit" variant="gradient" className="w-full justify-center py-2.5 font-bold gap-2">
               <Save className="w-4 h-4" /> Save Service Changes
+            </Button>
+          </form>
+        </Modal>
+      )}
+
+      {/* Add Service & Category Modal */}
+      {addServiceModalOpen && (
+        <Modal
+          isOpen={addServiceModalOpen}
+          onClose={() => setAddServiceModalOpen(false)}
+          title="Add New Service & Category"
+        >
+          <form onSubmit={handleCreateNewService} className="space-y-4 text-xs">
+            <Input
+              label="Service Name"
+              placeholder="e.g. Instagram Real Likes - Fast Speed"
+              value={newServiceForm.name}
+              onChange={(e) => setNewServiceForm({ ...newServiceForm, name: e.target.value })}
+              required
+            />
+
+            <div>
+              <label className="block font-bold text-slate-400 uppercase text-[10px] mb-1">
+                Category Selection
+              </label>
+              <select
+                value={newServiceForm.category}
+                onChange={(e) => setNewServiceForm({ ...newServiceForm, category: e.target.value })}
+                className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold custom-dropdown-scroll text-xs outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">-- Select Existing Category --</option>
+                <option value="__NEW__">➕ Create New Custom Category...</option>
+                {categories.map((cat, i) => (
+                  <option key={i} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            {newServiceForm.category === "__NEW__" && (
+              <Input
+                label="New Custom Category Name"
+                placeholder="e.g. Threads Engagements & Services"
+                value={newServiceForm.newCategoryName}
+                onChange={(e) => setNewServiceForm({ ...newServiceForm, newCategoryName: e.target.value })}
+                required
+              />
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label="Rate per 1,000 ($)"
+                type="number"
+                step="0.001"
+                value={newServiceForm.rate}
+                onChange={(e) => setNewServiceForm({ ...newServiceForm, rate: e.target.value })}
+                required
+              />
+              <div>
+                <label className="block font-bold text-slate-400 uppercase text-[10px] mb-1">Initial Status</label>
+                <select
+                  value={newServiceForm.status}
+                  onChange={(e) => setNewServiceForm({ ...newServiceForm, status: e.target.value })}
+                  className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold text-xs"
+                >
+                  <option value="Active">Active</option>
+                  <option value="Disabled">Disabled</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                label="Minimum Quantity"
+                type="number"
+                value={newServiceForm.min}
+                onChange={(e) => setNewServiceForm({ ...newServiceForm, min: e.target.value })}
+                required
+              />
+              <Input
+                label="Maximum Quantity"
+                type="number"
+                value={newServiceForm.max}
+                onChange={(e) => setNewServiceForm({ ...newServiceForm, max: e.target.value })}
+                required
+              />
+            </div>
+
+            <Button type="submit" variant="gradient" className="w-full justify-center py-2.5 font-bold gap-2">
+              <Save className="w-4 h-4" /> Save Service to Catalog
             </Button>
           </form>
         </Modal>

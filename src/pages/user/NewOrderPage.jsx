@@ -168,7 +168,7 @@ export const NewOrderPage = () => {
               <select
                 value={selectedServiceId}
                 onChange={handleServiceChange}
-                className="w-full px-4 py-3 text-xs sm:text-sm rounded-xl bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none font-semibold"
+                className="w-full px-4 py-3 text-xs sm:text-sm rounded-xl bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none font-semibold custom-dropdown-scroll"
               >
                 {categoryServices.map(s => (
                   <option key={s.id} value={s.id}>

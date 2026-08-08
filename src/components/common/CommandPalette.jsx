@@ -4,7 +4,7 @@ import { useServices } from '../../contexts/ServicesContext';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Search, Command, ArrowRight, LayoutDashboard, ShoppingCart, Sparkles, Wallet, Code2, Headphones, User, Shield, BarChart3, Settings, HelpCircle, Layers, Zap
+  Search, Command, ArrowRight, LayoutDashboard, ShoppingCart, Sparkles, Wallet, Code2, Headphones, User, Shield, BarChart3, Settings, HelpCircle, Layers, Zap, Gamepad2
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatCurrency } from '../../utils/formatters';
@@ -20,6 +20,7 @@ export const CommandPalette = () => {
     { label: 'User Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Navigation' },
     { label: 'New Order Campaign', path: '/dashboard/new-order', icon: ShoppingCart, category: 'Navigation' },
     { label: `Services Marketplace (${services.length ? services.length.toLocaleString() : '17,000+'}+)`, path: '/dashboard/services', icon: Sparkles, category: 'Navigation' },
+    { label: 'Game Services & Top-Up Store (PUBG, Valorant, Free Fire)', path: '/dashboard/game-services', icon: Gamepad2, category: 'Navigation' },
     { label: 'Order History & Status Tracking', path: '/dashboard/orders', icon: ShoppingCart, category: 'Navigation' },
     { label: 'Add Funds & Wallet History', path: '/dashboard/wallet', icon: Wallet, category: 'Navigation' },
     { label: 'API Developer Documentation', path: '/dashboard/api', icon: Code2, category: 'Navigation' },
@@ -31,6 +32,7 @@ export const CommandPalette = () => {
       { label: 'Revenue & System Analytics', path: '/admin/analytics', icon: BarChart3, category: 'Admin Tools' },
       { label: 'User Directory Management', path: '/admin/users', icon: User, category: 'Admin Tools' },
       { label: 'Service Catalog & Provider Sync', path: '/admin/services', icon: Sparkles, category: 'Admin Tools' },
+      { label: 'Gaming Catalog & Orders Fulfillment', path: '/admin/game-services', icon: Gamepad2, category: 'Admin Tools' },
       { label: 'Global Orders Management', path: '/admin/orders', icon: ShoppingCart, category: 'Admin Tools' },
       { label: 'System Configuration', path: '/admin/settings', icon: Settings, category: 'Admin Tools' },
     ] : []),
