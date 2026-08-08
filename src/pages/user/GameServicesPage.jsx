@@ -2,466 +2,390 @@ import React, { useState, useMemo } from "react";
 import { useGaming } from "../../contexts/GamingContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
-import { formatCurrency, formatDate } from "../../utils/formatters";
+import { formatCurrency } from "../../utils/formatters";
 import { Card } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
-import { ALL_ELDORADO_GAMES } from "../../data/eldoradoGamesList";
+import { ALL_ELDORADO_GAMES, CATEGORY_ITEMS } from "../../data/eldoradoGamesList";
 import {
   Gamepad2, Search, Zap, ShieldCheck, Star, CheckCircle2,
-  Sparkles, Key, ShoppingCart, UserCheck, Flame, Layers, Lock, Copy
+  Sparkles, Key, ShoppingCart, UserCheck, ChevronDown, ChevronUp,
+  Coins, Package, TrendingUp, Gift, Lock, Copy, ArrowLeft,
+  Info, Send, Hash, User
 } from "lucide-react";
 
+// ─── Category Config ──────────────────────────────────────────────────────────
+const ELDORADO_CATEGORIES = [
+  { id: "Currency",    label: "Currency",    icon: Coins,     hint: "Gold, Coins & In-game Money" },
+  { id: "Accounts",   label: "Accounts",    icon: Key,       hint: "Stacked & OG Accounts" },
+  { id: "Top Ups",    label: "Top Ups",     icon: Zap,       hint: "Player UID & Direct Reload" },
+  { id: "Items",      label: "Items",       icon: Package,   hint: "Skins, Pets & Rare Items" },
+  { id: "Boosting",   label: "Boosting",    icon: TrendingUp,hint: "Rank Carry & Powerleveling" },
+  { id: "Gift Cards", label: "Gift Cards",  icon: Gift,      hint: "Digital Keys & Subscriptions" },
+];
+
+// ─── Helper: Derive the game name from a category item label ─────────────────
+const deriveGame = (itemLabel) => {
+  // Strip trailing currency/unit nouns to get the base game name for the badge
+  return itemLabel
+    .replace(/ (Coins|Gold|Silver|Cash|Tokens|Gems|Diamonds|Points|Credits|UC|GP|S\$|Bars|Mesos|Mesos|Runes|Roubles|ISK|Caps|Won|Lucent|Shards|Platinum|Flux|Stubs|Kamas|Sheckles|Locks|Pansun|aUEC|Kinah|Alloy|Solaris|Gyldenblod|Elementium|Gil|Stardust|Robux|Bonds|Subscription|Top Ups|Gift Cards|Gift Card|Nitro|Pass|ZEMs|Frost Stars|Star Memory|Echo Beads|Monochromes|Riftcrystal|Origeometry|Chronal Nexus|Minecoins|Wild Cores|Lattice|Dragon Coins|Riot Points|Ancient Coins|Goldstars|TAM Gold|Auric Cells|Delta Coins|Scraps|V-Bucks)$/i, "")
+    .trim();
+};
+
+// ─── Color accent per category ────────────────────────────────────────────────
+const CAT_COLORS = {
+  "Currency":    { bg: "bg-amber-500/10",   border: "border-amber-500/30",   text: "text-amber-400",   btn: "bg-amber-500 hover:bg-amber-400" },
+  "Accounts":    { bg: "bg-indigo-500/10",  border: "border-indigo-500/30",  text: "text-indigo-400",  btn: "bg-indigo-600 hover:bg-indigo-500" },
+  "Top Ups":     { bg: "bg-sky-500/10",     border: "border-sky-500/30",     text: "text-sky-400",     btn: "bg-sky-600 hover:bg-sky-500" },
+  "Items":       { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-400", btn: "bg-emerald-600 hover:bg-emerald-500" },
+  "Boosting":    { bg: "bg-rose-500/10",    border: "border-rose-500/30",    text: "text-rose-400",    btn: "bg-rose-600 hover:bg-rose-500" },
+  "Gift Cards":  { bg: "bg-purple-500/10",  border: "border-purple-500/30",  text: "text-purple-400",  btn: "bg-purple-600 hover:bg-purple-500" },
+};
+
+// ─── Accounts Listing Card ────────────────────────────────────────────────────
+const AccountListingCard = ({ item, onBuy }) => (
+  <Card className="p-5 flex flex-col justify-between space-y-4 hover:border-indigo-500/50 transition-all duration-300 group">
+    <div className="space-y-3">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <Badge variant="indigo" className="font-extrabold uppercase text-[10px]">{item.game}</Badge>
+        <span className="text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+          <Zap className="w-3 h-3 fill-current" /> {item.deliveryType}
+        </span>
+      </div>
+      <h3 className="font-bold text-slate-100 text-sm line-clamp-2 group-hover:text-indigo-400 transition-colors leading-snug">{item.title}</h3>
+      <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+        <div className="flex items-center gap-2">
+          <UserCheck className="w-4 h-4 text-indigo-400" />
+          <span className="font-bold text-slate-200">{item.seller}</span>
+        </div>
+        <div className="flex items-center gap-1 text-amber-400 font-bold">
+          <Star className="w-3.5 h-3.5 fill-current" />
+          <span>{item.rating}</span>
+          <span className="text-slate-500 text-[10px]">({item.reviews.toLocaleString()})</span>
+        </div>
+      </div>
+      <div className="space-y-1">
+        {Object.entries(item.specs).slice(0, 3).map(([k, v]) => (
+          <div key={k} className="flex items-center justify-between text-[11px]">
+            <span className="capitalize text-slate-500">{k}:</span>
+            <span className="font-semibold text-slate-300 truncate max-w-44">{v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+      <div>
+        <span className="text-xs text-slate-600 line-through block font-medium">${item.originalPrice}</span>
+        <span className="text-xl font-black text-emerald-400">{formatCurrency(item.price)}</span>
+      </div>
+      <Button variant="gradient" size="sm" onClick={() => onBuy(item)} className="gap-1.5 font-bold">
+        <ShoppingCart className="w-4 h-4" /> Buy Now
+      </Button>
+    </div>
+  </Card>
+);
+
+// ─── Generic Category Item Card ───────────────────────────────────────────────
+const CategoryItemCard = ({ itemLabel, category, onOrder }) => {
+  const colors = CAT_COLORS[category] || CAT_COLORS["Items"];
+  const game = deriveGame(itemLabel);
+  return (
+    <button
+      onClick={() => onOrder(itemLabel)}
+      className={`group w-full text-left p-4 rounded-2xl border ${colors.border} ${colors.bg} hover:brightness-110 transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer`}
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${colors.bg} border ${colors.border}`}>
+          <Gamepad2 className={`w-4.5 h-4.5 ${colors.text}`} />
+        </div>
+        <div className="min-w-0">
+          <p className="font-bold text-slate-100 text-sm leading-tight truncate group-hover:text-white">{itemLabel}</p>
+          {game !== itemLabel && <p className="text-[10px] text-slate-500 font-semibold truncate">{game}</p>}
+        </div>
+      </div>
+      <span className={`shrink-0 text-[10px] font-black uppercase px-2.5 py-1 rounded-lg border ${colors.border} ${colors.text} opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap`}>
+        Order →
+      </span>
+    </button>
+  );
+};
+
+// ═════════════════════════════════════════════════════════════════════════════
 export const GameServicesPage = () => {
-  const { user } = useAuth();
-  const { addToast } = useToast();
-  const { gameServices, eldoradoListings, gameOrders, placeGameOrder, placeAccountOrder } = useGaming();
+  const { user }           = useAuth();
+  const { addToast }       = useToast();
+  const { eldoradoListings, placeAccountOrder } = useGaming();
 
-  const [activeTab, setActiveTab] = useState("Accounts"); // 'Accounts' | 'Currency' | 'Items' | 'Boosting'
-  const [searchGame, setSearchGame] = useState("");
-  const [selectedGameFilter, setSelectedGameFilter] = useState("All Games");
+  const [activeCategory, setActiveCategory]   = useState("Accounts");
+  const [searchItem, setSearchItem]           = useState("");
 
-  // Account Buy Modal state
-  const [selectedListing, setSelectedListing] = useState(null);
+  // Account buy modal
+  const [selectedListing, setSelectedListing]           = useState(null);
   const [purchasedCredentials, setPurchasedCredentials] = useState(null);
+  const [isSubmitting, setIsSubmitting]                 = useState(false);
 
-  // Top-Up Order Modal state
-  const [selectedTopUpService, setSelectedTopUpService] = useState(null);
-  const [selectedPackage, setSelectedPackage] = useState(null);
-  const [playerDetails, setPlayerDetails] = useState("");
+  // Generic order modal (Currency / Top Ups / Items / Boosting / Gift Cards)
+  const [orderItem, setOrderItem]   = useState(null);   // label string
+  const [orderForm, setOrderForm]   = useState({ quantity: "1", playerInfo: "", notes: "" });
+  const [orderDone, setOrderDone]   = useState(false);
+  const [orderId, setOrderId]       = useState(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // ── Filtered items for current category ───────────────────────────────────
+  const currentItems = useMemo(() => {
+    const raw = CATEGORY_ITEMS[activeCategory] || [];
+    if (!searchItem.trim()) return raw;
+    const q = searchItem.toLowerCase();
+    return raw.filter(i => i.toLowerCase().includes(q));
+  }, [activeCategory, searchItem]);
 
-  // Filter 173 games for dropdown search
-  const filteredGamesList = useMemo(() => {
-    if (!searchGame.trim()) return ALL_ELDORADO_GAMES;
-    const q = searchGame.toLowerCase();
-    return ALL_ELDORADO_GAMES.filter(g => g.toLowerCase().includes(q));
-  }, [searchGame]);
+  const accountListings = useMemo(() => {
+    if (activeCategory !== "Accounts") return [];
+    if (!searchItem.trim()) return eldoradoListings;
+    const q = searchItem.toLowerCase();
+    return eldoradoListings.filter(
+      l => l.game.toLowerCase().includes(q) || l.title.toLowerCase().includes(q)
+    );
+  }, [activeCategory, eldoradoListings, searchItem]);
 
-  // Filtered Eldorado Account Listings
-  const filteredAccountListings = useMemo(() => {
-    return eldoradoListings.filter(item => {
-      const matchGame = selectedGameFilter === "All Games" || item.game === selectedGameFilter;
-      const q = searchGame.toLowerCase();
-      const matchSearch = !q || item.game.toLowerCase().includes(q) || item.title.toLowerCase().includes(q);
-      return matchGame && matchSearch;
-    });
-  }, [eldoradoListings, selectedGameFilter, searchGame]);
-
-  // Filtered Currency Top-Up Services
-  const filteredTopUpServices = useMemo(() => {
-    return gameServices.filter(item => {
-      const matchGame = selectedGameFilter === "All Games" || item.title.toLowerCase().includes(selectedGameFilter.toLowerCase());
-      const q = searchGame.toLowerCase();
-      const matchSearch = !q || item.title.toLowerCase().includes(q) || item.publisher.toLowerCase().includes(q);
-      return matchGame && matchSearch;
-    });
-  }, [gameServices, selectedGameFilter, searchGame]);
-
-  // Handle Account Purchase
+  // ── Account Buy Flow ──────────────────────────────────────────────────────
   const handleBuyAccount = (e) => {
     e.preventDefault();
     if (!selectedListing) return;
-
     if ((user?.balance || 0) < selectedListing.price) {
-      addToast(`Insufficient wallet balance! Required: ${formatCurrency(selectedListing.price)}`, "error");
+      addToast(`Insufficient wallet balance! Need ${formatCurrency(selectedListing.price)}`, "error");
       return;
     }
-
     setIsSubmitting(true);
     setTimeout(() => {
       try {
         const order = placeAccountOrder({ listing: selectedListing });
-        setPurchasedCredentials({
-          orderId: order.id,
-          game: selectedListing.game,
-          credentials: selectedListing.credentials
-        });
-        addToast(`Account Purchased! Credentials released for ${selectedListing.game}.`, "success");
-      } catch (err) {
-        addToast(err.message, "error");
-      } finally {
-        setIsSubmitting(false);
-      }
-    }, 600);
+        setPurchasedCredentials({ orderId: order.id, credentials: selectedListing.credentials });
+        addToast(`Account purchased! Credentials released for ${selectedListing.game}.`, "success");
+      } catch (err) { addToast(err.message, "error"); }
+      finally { setIsSubmitting(false); }
+    }, 700);
   };
 
-  // Handle Top-Up Purchase
-  const handleTopUpOrder = (e) => {
+  const copyText = (t) => { navigator.clipboard.writeText(t); addToast("Copied to clipboard!", "info"); };
+
+  // ── Generic Order Flow ────────────────────────────────────────────────────
+  const openOrderModal = (label) => {
+    setOrderItem(label);
+    setOrderForm({ quantity: "1", playerInfo: "", notes: "" });
+    setOrderDone(false);
+    setOrderId(null);
+  };
+
+  const handlePlaceGenericOrder = (e) => {
     e.preventDefault();
-    if (!selectedTopUpService || !selectedPackage) return;
-    if (!playerDetails.trim()) {
-      addToast("Please provide your Player ID or Tag!", "warning");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setTimeout(() => {
-      try {
-        const order = placeGameOrder({
-          gameService: selectedTopUpService,
-          packageItem: selectedPackage,
-          playerDetails
-        });
-        addToast(`Top-up order #${order.id} placed successfully!`, "success");
-        setSelectedTopUpService(null);
-        setSelectedPackage(null);
-        setPlayerDetails("");
-      } catch (err) {
-        addToast(err.message, "error");
-      } finally {
-        setIsSubmitting(false);
-      }
-    }, 600);
+    const newId = `MKT-${Math.floor(10000 + Math.random() * 90000)}`;
+    setOrderId(newId);
+    setOrderDone(true);
+    addToast(`Order #${newId} placed for ${orderItem}!`, "success");
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    addToast("Account credentials copied to clipboard!", "info");
-  };
+  const colors = CAT_COLORS[activeCategory] || CAT_COLORS["Items"];
+  const activeCat = ELDORADO_CATEGORIES.find(c => c.id === activeCategory);
 
   return (
     <div className="space-y-6">
-      {/* Eldorado Hero Header */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-linear-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 text-white overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute inset-0 dot-pattern opacity-20 pointer-events-none" />
-
-        <div className="relative z-10 space-y-4">
+      {/* ── Hero ───────────────────────────────────────────────────────── */}
+      <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 text-white overflow-hidden shadow-2xl">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="indigo" className="bg-indigo-600/30 border-indigo-500/40 text-indigo-300 font-bold">
+            <Badge variant="indigo" className="bg-indigo-600/30 border-indigo-500/40 text-indigo-300 font-bold text-[10px]">
               ELDORADO GAMING MARKETPLACE
             </Badge>
-            <span className="text-xs text-slate-400 font-semibold">• 173+ Popular Games Supported</span>
+            <span className="text-xs text-slate-400 font-semibold">• 173+ Games • Instant Delivery</span>
           </div>
-
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-3">
-            <Gamepad2 className="w-8 h-8 text-indigo-400" /> Buy Stacked Game Accounts, Gold & In-Game Currency
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-3">
+            <Gamepad2 className="w-7 h-7 text-indigo-400 shrink-0" />
+            Eldorado — Currency, Accounts, Top-Ups, Items, Boosting & Gift Cards
           </h1>
-
-          <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-            Verified accounts with full email access, instant delivery, 100% buyer recovery protection, and instant player top-ups across all 173 major titles.
+          <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+            Trade in-game currency, buy stacked accounts, refill your top-ups, grab rare items, get rank carries and digital gift cards — with 100% buyer protection & instant 24/7 delivery.
           </p>
-
-          <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-slate-300 pt-2">
-            <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-400" /> Instant Credentials Release</span>
-            <span className="flex items-center gap-1.5"><UserCheck className="w-4 h-4 text-indigo-400" /> 100% Verified Sellers</span>
-            <span className="flex items-center gap-1.5"><Zap className="w-4 h-4 text-amber-400" /> 24/7 Automated Delivery</span>
-          </div>
         </div>
       </div>
 
-      {/* Game Selector & Search Bar */}
+      {/* ── Category Nav Bar ───────────────────────────────────────────── */}
       <Card className="p-4 sm:p-5 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Marketplace Navigation Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 custom-dropdown-scroll">
-            {["Accounts", "Currency & Top-Up", "Items & Skins", "Rank Boosting"].map((tab) => {
-              const tabKey = tab.startsWith("Accounts") ? "Accounts" : tab.startsWith("Currency") ? "Currency" : tab;
-              const isActive = activeTab === tabKey;
-              return (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tabKey)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                    isActive
-                      ? "bg-linear-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/20"
-                      : "bg-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-800"
-                  }`}
-                >
-                  {tab}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Game Search Bar */}
-          <div className="flex items-center gap-2 w-full md:w-80">
-            <div className="relative w-full">
-              <Search className="w-4 h-4 text-indigo-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchGame}
-                onChange={(e) => setSearchGame(e.target.value)}
-                placeholder="Search from 173+ games (Fortnite, Valorant, CoD)..."
-                className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-semibold"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 173 Games Filter Pills */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-400 font-bold">
-            <span>Filter by Game Title ({filteredGamesList.length} games):</span>
-            {selectedGameFilter !== "All Games" && (
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-800" style={{ scrollbarWidth: "none" }}>
+          {ELDORADO_CATEGORIES.map((cat) => {
+            const isActive = activeCategory === cat.id;
+            const Icon = cat.icon;
+            const c = CAT_COLORS[cat.id];
+            return (
               <button
-                onClick={() => setSelectedGameFilter("All Games")}
-                className="text-indigo-400 hover:underline text-[11px]"
-              >
-                Clear Filter ({selectedGameFilter})
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2 overflow-x-auto py-1 custom-dropdown-scroll max-h-24">
-            <button
-              onClick={() => setSelectedGameFilter("All Games")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold shrink-0 transition-all ${
-                selectedGameFilter === "All Games"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-slate-800/80 text-slate-400 hover:text-white"
-              }`}
-            >
-              All Games
-            </button>
-            {filteredGamesList.slice(0, 40).map((game) => (
-              <button
-                key={game}
-                onClick={() => setSelectedGameFilter(game)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all ${
-                  selectedGameFilter === game
-                    ? "bg-indigo-600 text-white font-bold"
-                    : "bg-slate-800/60 text-slate-300 hover:bg-slate-800 hover:text-white"
+                key={cat.id}
+                onClick={() => { setActiveCategory(cat.id); setSearchItem(""); }}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center gap-2 whitespace-nowrap border shrink-0 ${
+                  isActive
+                    ? `${c.bg} ${c.border} ${c.text} shadow-md`
+                    : "bg-slate-900/60 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white"
                 }`}
               >
-                {game}
+                <Icon className="w-4 h-4" />
+                <span>{cat.label}</span>
+                {isActive
+                  ? <ChevronUp className="w-3.5 h-3.5 shrink-0" />
+                  : <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />}
               </button>
-            ))}
-          </div>
+            );
+          })}
+        </div>
+
+        {/* Search bar */}
+        <div className="relative">
+          <Search className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 ${colors.text}`} />
+          <input
+            type="text"
+            value={searchItem}
+            onChange={e => setSearchItem(e.target.value)}
+            placeholder={`Search ${activeCategory}… (${activeCategory === "Accounts" ? eldoradoListings.length + " listings" : (CATEGORY_ITEMS[activeCategory]?.length || 0) + " items"})`}
+            className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-semibold"
+          />
+        </div>
+
+        {/* Category subtitle */}
+        <div className={`flex items-center gap-2 text-xs font-semibold ${colors.text}`}>
+          <Info className="w-3.5 h-3.5 shrink-0" />
+          <span>{activeCat?.hint}</span>
+          <span className="text-slate-600 ml-auto">
+            {activeCategory === "Accounts"
+              ? `${accountListings.length} listings`
+              : `${currentItems.length} items`}
+          </span>
         </div>
       </Card>
 
-      {/* TAB 1: ACCOUNTS MARKETPLACE */}
-      {activeTab === "Accounts" && (
+      {/* ── Accounts: Listing Grid ──────────────────────────────────────── */}
+      {activeCategory === "Accounts" && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Key className="w-5 h-5 text-indigo-400" /> Stacked Accounts ({filteredAccountListings.length} listings)
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-400" />
+              Accounts Marketplace ({accountListings.length})
             </h2>
-            <span className="text-xs text-slate-400 font-semibold">100% Full Access • Auto Credentials Delivery</span>
+            <span className="text-xs text-slate-400 font-semibold">Instant Email Access • Buyer Protection</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAccountListings.length === 0 ? (
-              <Card className="col-span-full py-12 text-center text-slate-400">
-                <Gamepad2 className="w-12 h-12 mx-auto text-slate-700 mb-3" />
-                <p className="font-bold text-white">No accounts listed for "{selectedGameFilter}" yet.</p>
-                <p className="text-xs mt-1">Try clearing your search query or selecting "All Games".</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {accountListings.length === 0 ? (
+              <Card className="col-span-full py-10 text-center text-slate-500">
+                <Key className="w-10 h-10 mx-auto text-slate-700 mb-3" />
+                <p className="font-bold text-white">No accounts found for "{searchItem}"</p>
               </Card>
-            ) : (
-              filteredAccountListings.map((item) => (
-                <Card
-                  key={item.id}
-                  className="p-5 flex flex-col justify-between space-y-4 hover:border-indigo-500/50 transition-all duration-300 group"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="indigo" className="font-extrabold uppercase">
-                        {item.game}
-                      </Badge>
-                      <span className="text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                        <Zap className="w-3 h-3 fill-current" /> {item.deliveryType}
-                      </span>
-                    </div>
-
-                    <h3 className="font-bold text-slate-100 text-sm line-clamp-2 group-hover:text-indigo-400 transition-colors leading-snug">
-                      {item.title}
-                    </h3>
-
-                    {/* Seller Rating Card */}
-                    <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
-                      <div className="flex items-center gap-2">
-                        <UserCheck className="w-4 h-4 text-indigo-400" />
-                        <span className="font-bold text-slate-200">{item.seller}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-amber-400 font-bold">
-                        <Star className="w-3.5 h-3.5 fill-current" />
-                        <span>{item.rating}</span>
-                        <span className="text-slate-500 text-[10px]">({item.reviews})</span>
-                      </div>
-                    </div>
-
-                    {/* Spec Tags */}
-                    <div className="space-y-1 text-xs text-slate-400">
-                      {Object.entries(item.specs).slice(0, 3).map(([k, v]) => (
-                        <div key={k} className="flex items-center justify-between">
-                          <span className="capitalize text-slate-500 text-[11px]">{k}:</span>
-                          <span className="font-semibold text-slate-300 text-[11px] truncate max-w-40">{v}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-                    <div>
-                      <span className="text-xs text-slate-500 line-through block font-medium">
-                        ${item.originalPrice}
-                      </span>
-                      <span className="text-xl font-black text-emerald-400">
-                        {formatCurrency(item.price)}
-                      </span>
-                    </div>
-
-                    <Button
-                      variant="gradient"
-                      size="sm"
-                      onClick={() => { setSelectedListing(item); setPurchasedCredentials(null); }}
-                      className="gap-1.5 font-bold shadow-indigo-500/30"
-                    >
-                      <ShoppingCart className="w-4 h-4" /> Buy Account
-                    </Button>
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: IN-GAME CURRENCY & TOP-UPS */}
-      {activeTab !== "Accounts" && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-indigo-400" /> Currency & Top-Up Reloads ({filteredTopUpServices.length} items)
-            </h2>
-            <span className="text-xs text-slate-400 font-semibold">Direct Player UID Reload • 24/7 Automated</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTopUpServices.map((service) => (
-              <Card
-                key={service.id}
-                className="p-5 flex flex-col justify-between space-y-4 hover:border-indigo-500/50 transition-all"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="purple" className="font-bold">
-                      {service.publisher}
-                    </Badge>
-                    <span className="text-[10px] font-bold text-indigo-400 uppercase">
-                      {service.deliveryType}
-                    </span>
-                  </div>
-
-                  <h3 className="font-bold text-white text-base">{service.title}</h3>
-                  <p className="text-xs text-slate-400 line-clamp-2">{service.description}</p>
-                </div>
-
-                <div className="space-y-2 pt-2 border-t border-slate-800">
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Select Package Option:
-                  </label>
-                  <div className="space-y-1.5">
-                    {service.packages.map((pkg) => (
-                      <button
-                        key={pkg.name}
-                        onClick={() => {
-                          setSelectedTopUpService(service);
-                          setSelectedPackage(pkg);
-                        }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-900 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/50 text-xs font-semibold transition-all"
-                      >
-                        <span className="text-slate-200">{pkg.name}</span>
-                        <span className="font-black text-emerald-400">{formatCurrency(pkg.price)}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </Card>
+            ) : accountListings.map(item => (
+              <AccountListingCard
+                key={item.id}
+                item={item}
+                onBuy={(listing) => { setSelectedListing(listing); setPurchasedCredentials(null); }}
+              />
             ))}
           </div>
         </div>
       )}
 
-      {/* Account Buy Modal */}
+      {/* ── Other Categories: Item Grid ─────────────────────────────────── */}
+      {activeCategory !== "Accounts" && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <Sparkles className={`w-5 h-5 ${colors.text}`} />
+              {activeCategory} ({currentItems.length})
+            </h2>
+            <span className="text-xs text-slate-400 font-semibold">Click any item to place an order</span>
+          </div>
+
+          {currentItems.length === 0 ? (
+            <Card className="py-10 text-center text-slate-500">
+              <Package className="w-10 h-10 mx-auto text-slate-700 mb-3" />
+              <p className="font-bold text-white">No results for "{searchItem}"</p>
+              <p className="text-xs mt-1">Try a different search term.</p>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {currentItems.map((label) => (
+                <CategoryItemCard
+                  key={label}
+                  itemLabel={label}
+                  category={activeCategory}
+                  onOrder={openOrderModal}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Account Buy Modal ───────────────────────────────────────────── */}
       <Modal
         isOpen={Boolean(selectedListing)}
         onClose={() => { setSelectedListing(null); setPurchasedCredentials(null); }}
-        title={purchasedCredentials ? "🎉 Purchase Successful - Account Credentials Released" : `Checkout: ${selectedListing?.game}`}
+        title={purchasedCredentials
+          ? `🎉 Purchase Successful — Credentials Released`
+          : `Buy Account: ${selectedListing?.game}`}
         maxWidth="max-w-xl"
       >
         {selectedListing && (
           <div className="space-y-5 text-xs">
             {purchasedCredentials ? (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 space-y-2">
+                <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 space-y-1">
                   <p className="font-bold flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" /> Account Order {purchasedCredentials.orderId} Confirmed!
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400" /> Order {purchasedCredentials.orderId} Confirmed!
                   </p>
-                  <p className="text-xs text-slate-300">
-                    Wallet funds deducted ({formatCurrency(selectedListing.price)}). Your login credentials are released below:
-                  </p>
+                  <p className="text-slate-300 text-xs">Wallet debited {formatCurrency(selectedListing.price)}. Account details below:</p>
                 </div>
-
-                <div className="p-4 rounded-2xl bg-slate-900 border border-indigo-500/40 space-y-2 relative">
+                <div className="p-4 rounded-2xl bg-slate-900 border border-indigo-500/40 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-indigo-400 uppercase text-[10px]">Credentials String</span>
-                    <button
-                      onClick={() => copyToClipboard(purchasedCredentials.credentials)}
-                      className="text-indigo-400 hover:text-white font-bold flex items-center gap-1 text-[11px]"
-                    >
-                      <Copy className="w-3.5 h-3.5" /> Copy Code
+                    <span className="font-bold text-indigo-400 text-[10px] uppercase">Login Credentials</span>
+                    <button onClick={() => copyText(purchasedCredentials.credentials)} className="text-indigo-400 hover:text-white font-bold flex items-center gap-1 text-[11px]">
+                      <Copy className="w-3.5 h-3.5" /> Copy
                     </button>
                   </div>
                   <pre className="font-mono text-xs text-slate-200 bg-slate-950 p-3 rounded-xl border border-slate-800 whitespace-pre-wrap break-all">
                     {purchasedCredentials.credentials}
                   </pre>
                 </div>
-
-                <Button
-                  variant="gradient"
-                  onClick={() => { setSelectedListing(null); setPurchasedCredentials(null); }}
-                  className="w-full justify-center py-2.5 font-bold"
-                >
-                  Done • View in Orders History
+                <Button variant="gradient" onClick={() => { setSelectedListing(null); setPurchasedCredentials(null); }} className="w-full justify-center py-2.5 font-bold">
+                  Done
                 </Button>
               </div>
             ) : (
               <form onSubmit={handleBuyAccount} className="space-y-4">
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="indigo" className="font-bold">{selectedListing.game}</Badge>
-                    <span className="text-emerald-400 font-bold">{selectedListing.deliveryType}</span>
-                  </div>
+                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                  <Badge variant="indigo" className="font-bold">{selectedListing.game}</Badge>
                   <h4 className="font-bold text-slate-100 text-sm leading-snug">{selectedListing.title}</h4>
+                  <div className="flex items-center gap-2 text-xs text-amber-400 font-bold">
+                    <Star className="w-3.5 h-3.5 fill-current" />
+                    {selectedListing.rating} ({selectedListing.reviews.toLocaleString()} reviews) · {selectedListing.seller}
+                  </div>
                 </div>
-
-                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-2">
-                  <p className="font-bold text-slate-300 uppercase text-[10px]">Account Specifications:</p>
+                <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1.5">
+                  <p className="font-bold text-slate-300 text-[10px] uppercase mb-2">Specifications</p>
                   {Object.entries(selectedListing.specs).map(([k, v]) => (
                     <div key={k} className="flex items-center justify-between text-xs">
-                      <span className="capitalize text-slate-400">{k}:</span>
-                      <span className="font-semibold text-slate-200">{v}</span>
+                      <span className="capitalize text-slate-500">{k}</span>
+                      <span className="font-semibold text-slate-200 text-right max-w-52">{v}</span>
                     </div>
                   ))}
                 </div>
-
                 <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span>Available Balance:</span>
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <span>Wallet Balance</span>
                     <span className="font-bold text-white">{formatCurrency(user?.balance || 0)}</span>
                   </div>
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span>Account Cost:</span>
-                    <span className="font-bold text-emerald-400">{formatCurrency(selectedListing.price)}</span>
-                  </div>
-                  <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-sm font-bold text-white">
-                    <span>Final Checkout:</span>
-                    <span className="text-xl font-black text-indigo-400">{formatCurrency(selectedListing.price)}</span>
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <span className="line-through text-slate-600">${selectedListing.originalPrice}</span>
+                    <span className="font-bold text-emerald-400 text-lg">{formatCurrency(selectedListing.price)}</span>
                   </div>
                 </div>
-
-                <Button
-                  type="submit"
-                  variant="gradient"
-                  isLoading={isSubmitting}
-                  className="w-full justify-center py-3 font-bold text-sm shadow-indigo-500/30 gap-2"
-                >
-                  <Lock className="w-4 h-4" /> Confirm & Unlock Credentials ({formatCurrency(selectedListing.price)})
+                <Button type="submit" variant="gradient" isLoading={isSubmitting} className="w-full justify-center py-3 font-bold text-sm gap-2">
+                  <Lock className="w-4 h-4" /> Confirm & Unlock Account ({formatCurrency(selectedListing.price)})
                 </Button>
               </form>
             )}
@@ -469,57 +393,99 @@ export const GameServicesPage = () => {
         )}
       </Modal>
 
-      {/* Top-Up Order Checkout Modal */}
+      {/* ── Generic Order Modal (Currency / Top Ups / Items / Boosting / Gift Cards) ── */}
       <Modal
-        isOpen={Boolean(selectedTopUpService && selectedPackage)}
-        onClose={() => { setSelectedTopUpService(null); setSelectedPackage(null); }}
-        title={`Top-Up: ${selectedTopUpService?.title}`}
+        isOpen={Boolean(orderItem)}
+        onClose={() => { setOrderItem(null); setOrderDone(false); }}
+        title={orderDone ? `✅ Order Placed Successfully` : `Order: ${orderItem}`}
         maxWidth="max-w-md"
       >
-        {selectedTopUpService && selectedPackage && (
-          <form onSubmit={handleTopUpOrder} className="space-y-4 text-xs">
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-white text-sm">{selectedPackage.name}</span>
-                <span className="font-black text-emerald-400 text-base">{formatCurrency(selectedPackage.price)}</span>
+        {orderItem && (
+          <div className="space-y-5 text-xs">
+            {orderDone ? (
+              <div className="space-y-4 text-center">
+                <div className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 space-y-2">
+                  <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
+                  <p className="font-black text-sm text-white">Order #{orderId} Placed!</p>
+                  <p className="text-xs text-slate-300">{orderItem}</p>
+                  <p className="text-xs text-slate-400 mt-1">Our team will process your order shortly. Check your Orders page for live status updates.</p>
+                </div>
+                <Button variant="gradient" onClick={() => { setOrderItem(null); setOrderDone(false); }} className="w-full justify-center py-2.5 font-bold">
+                  Done — View My Orders
+                </Button>
               </div>
-              <p className="text-slate-400 text-[11px]">{selectedTopUpService.description}</p>
-            </div>
+            ) : (
+              <form onSubmit={handlePlaceGenericOrder} className="space-y-4">
+                {/* Item badge */}
+                <div className={`p-4 rounded-2xl border ${colors.border} ${colors.bg} space-y-1`}>
+                  <p className={`text-[10px] font-black uppercase ${colors.text}`}>{activeCategory}</p>
+                  <p className="font-bold text-white text-sm">{orderItem}</p>
+                </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
-                Enter {selectedTopUpService.requiredFields ? selectedTopUpService.requiredFields.join(" / ") : "Player ID / Tag"}
-              </label>
-              <input
-                type="text"
-                value={playerDetails}
-                onChange={(e) => setPlayerDetails(e.target.value)}
-                placeholder="e.g. 518492019 / PlayerName#1234"
-                className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-bold outline-none focus:ring-2 focus:ring-indigo-500"
-                required
-              />
-            </div>
+                {/* Quantity / Amount */}
+                <div className="space-y-1.5">
+                  <label className="text-slate-400 font-bold flex items-center gap-1.5">
+                    <Hash className="w-3.5 h-3.5" /> Quantity / Amount
+                  </label>
+                  <input
+                    type="text"
+                    value={orderForm.quantity}
+                    onChange={e => setOrderForm(f => ({ ...f, quantity: e.target.value }))}
+                    placeholder="e.g. 100M gold, 500 UC, 1 account…"
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
 
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1.5">
-              <div className="flex items-center justify-between text-slate-400">
-                <span>Wallet Balance:</span>
-                <span className="font-bold text-white">{formatCurrency(user?.balance || 0)}</span>
-              </div>
-              <div className="flex items-center justify-between text-slate-400">
-                <span>Total Charge:</span>
-                <span className="font-bold text-emerald-400">{formatCurrency(selectedPackage.price)}</span>
-              </div>
-            </div>
+                {/* Player Info */}
+                <div className="space-y-1.5">
+                  <label className="text-slate-400 font-bold flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5" />
+                    {activeCategory === "Boosting" ? "Game Username / Account Email" :
+                     activeCategory === "Gift Cards" ? "Delivery Email Address" :
+                     activeCategory === "Top Ups" ? "Player ID / UID" :
+                     "Player Username / Game ID"}
+                  </label>
+                  <input
+                    type="text"
+                    value={orderForm.playerInfo}
+                    onChange={e => setOrderForm(f => ({ ...f, playerInfo: e.target.value }))}
+                    placeholder={
+                      activeCategory === "Boosting" ? "your_username#1234" :
+                      activeCategory === "Gift Cards" ? "your@email.com" :
+                      activeCategory === "Top Ups" ? "e.g. 5124389012 (PUBG UID)" :
+                      "Player Tag / Username"
+                    }
+                    required
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
 
-            <Button
-              type="submit"
-              variant="gradient"
-              isLoading={isSubmitting}
-              className="w-full justify-center py-3 font-bold text-sm shadow-indigo-500/30 gap-2"
-            >
-              <ShoppingCart className="w-4 h-4" /> Confirm Top-Up Checkout ({formatCurrency(selectedPackage.price)})
-            </Button>
-          </form>
+                {/* Notes */}
+                <div className="space-y-1.5">
+                  <label className="text-slate-400 font-bold flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5" /> Additional Notes (optional)
+                  </label>
+                  <textarea
+                    value={orderForm.notes}
+                    onChange={e => setOrderForm(f => ({ ...f, notes: e.target.value }))}
+                    rows={2}
+                    placeholder="Any special requirements, server, region, etc."
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white placeholder-slate-600 text-xs font-semibold focus:outline-none focus:border-indigo-500 resize-none"
+                  />
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-[11px] leading-relaxed">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 inline mr-1" />
+                  Secure order • Staff will contact you to confirm price & delivery. Your order will appear in Orders tab.
+                </div>
+
+                <Button type="submit" variant="gradient" className={`w-full justify-center py-3 font-bold text-sm gap-2`}>
+                  <Send className="w-4 h-4" /> Place Order for {orderItem}
+                </Button>
+              </form>
+            )}
+          </div>
         )}
       </Modal>
     </div>
