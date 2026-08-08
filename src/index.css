@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  /* Extra-small breakpoint for fine-grained mobile control */
+  --breakpoint-xs: 475px;
+}
+
 /* ============================================================
    WIZARD SMM — Premium Design System
    ============================================================ */

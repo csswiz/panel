@@ -31,41 +31,45 @@ export const UserDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Top Welcome Banner */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-linear-to-r from-indigo-600 via-blue-600 to-purple-600 text-white overflow-hidden shadow-xl shadow-indigo-500/15">
+      <div className="relative p-5 sm:p-8 rounded-3xl bg-linear-to-r from-indigo-600 via-blue-600 to-purple-600 text-white overflow-hidden shadow-xl shadow-indigo-500/15">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-indigo-400/15 rounded-full blur-[60px] pointer-events-none" />
         <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-violet-400/10 rounded-full blur-2xl pointer-events-none animate-float-slow" />
         <div className="absolute inset-0 dot-pattern opacity-10" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col gap-5">
+          {/* Text block */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Badge variant="indigo" className="bg-white/20 text-white border-white/30 shadow-sm">
+            <div className="flex items-center flex-wrap gap-2">
+              <Badge variant="indigo" className="bg-white/20 text-white border-white/30 shadow-sm text-[10px]">
                 {user?.tier || "Standard"}
               </Badge>
-              <span className="text-xs font-semibold text-indigo-100">• 15% VIP Discount Active</span>
+              <span className="text-[11px] font-semibold text-indigo-100">• 15% VIP Discount Active</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight">
-              Welcome back, {user?.name || "Member"}! 👋
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight">
+              Welcome back,{" "}
+              <span className="wrap-break-word">{user?.name || "Member"}</span>! 👋
             </h1>
-            <p className="text-xs sm:text-sm text-indigo-100 max-w-xl">
-              Your panel is operating cleanly. 17,000+ services are live with sub-second order processing speed.
+            <p className="text-[11px] sm:text-sm text-indigo-100 leading-relaxed max-w-xl">
+              Your panel is live. 17,000+ services with sub-second order processing.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* CTA Buttons — stack on mobile, row on sm+ */}
+          <div className="flex flex-col xs:flex-row sm:flex-row items-stretch xs:items-center gap-2 sm:gap-3">
             <Button
               variant="secondary"
               onClick={() => navigate("/dashboard/new-order")}
-              className="bg-white text-indigo-600 hover:bg-indigo-50 font-bold border-none shadow-lg gap-2"
+              className="bg-white text-indigo-600 hover:bg-indigo-50 font-bold border-none shadow-lg gap-2 justify-center w-full xs:w-auto text-xs sm:text-sm"
             >
-              <ShoppingCart className="w-4 h-4" /> Place New Order
+              <ShoppingCart className="w-4 h-4 shrink-0" /> Place New Order
             </Button>
             <Button
               variant="outline"
               onClick={() => navigate("/dashboard/wallet")}
-              className="border-white/40 text-white hover:bg-white/10 font-bold gap-2"
+              className="border-white/40 text-white hover:bg-white/10 font-bold gap-2 justify-center w-full xs:w-auto text-xs sm:text-sm"
             >
-              <PlusCircle className="w-4 h-4" /> Add Balance
+              <PlusCircle className="w-4 h-4 shrink-0" /> Add Balance
             </Button>
           </div>
         </div>
