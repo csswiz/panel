@@ -1,35 +1,46 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { CRESCITALY_SERVICES } from "../data/crescitalyServices";
 import { TRUSTYHUB_SERVICES } from "../data/trustyHubServices";
+import { VIIEAGENCY_SERVICES } from "../data/viieAgencyServices";
 import { MOCK_SERVICES, CATEGORIES, PLATFORMS } from "../data/mockServices";
 
 const ServicesContext = createContext();
 
-const STORAGE_KEY = "smm_services_db_trusty_crescitaly_v2";
+const STORAGE_KEY = "smm_services_db_master_v3";
 
 const getCombinedCatalog = () => {
+  const viie = Array.isArray(VIIEAGENCY_SERVICES) ? VIIEAGENCY_SERVICES : [];
   const trusty = Array.isArray(TRUSTYHUB_SERVICES) ? TRUSTYHUB_SERVICES : [];
   const crescitaly = Array.isArray(CRESCITALY_SERVICES) ? CRESCITALY_SERVICES : [];
   
-  if (trusty.length === 0 && crescitaly.length === 0) return MOCK_SERVICES;
+  if (viie.length === 0 && trusty.length === 0 && crescitaly.length === 0) return MOCK_SERVICES;
 
   const idSet = new Set();
   const list = [];
 
-  for (const s of trusty) {
+  for (const s of viie) {
     if (!idSet.has(s.id)) {
       idSet.add(s.id);
       list.push(s);
     }
   }
 
+  for (const s of trusty) {
+    let targetId = s.id;
+    if (idSet.has(targetId)) targetId = s.id + 20000;
+    if (!idSet.has(targetId)) {
+      idSet.add(targetId);
+      list.push({ ...s, id: targetId });
+    }
+  }
+
   for (const s of crescitaly) {
     let targetId = s.id;
-    if (idSet.has(targetId)) {
-      targetId = s.id + 50000;
+    if (idSet.has(targetId)) targetId = s.id + 50000;
+    if (!idSet.has(targetId)) {
+      idSet.add(targetId);
+      list.push({ ...s, id: targetId });
     }
-    idSet.add(targetId);
-    list.push({ ...s, id: targetId });
   }
 
   return list;
