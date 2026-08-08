@@ -21,18 +21,24 @@ export const NewOrderPage = () => {
   const { addToast } = useToast();
   const { addOrder } = useOrders();
   const { addTransaction } = useWallet();
-  const { services, categories } = useServices();
+  const { services = [], categories = [] } = useServices();
   const { maintenanceMode } = useSettings();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const serviceIdParam = searchParams.get("serviceId");
 
-  const [selectedCategory, setSelectedCategory] = useState(categories[0] || "Instagram Likes & Views");
+  const [selectedCategory, setSelectedCategory] = useState(categories[0] || "Instagram Followers - High Quality");
   const [selectedServiceId, setSelectedServiceId] = useState(services[0]?.id || 1001);
   const [link, setLink] = useState("");
   const [quantity, setQuantity] = useState(1000);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (categories.length > 0 && !categories.includes(selectedCategory)) {
+      setSelectedCategory(categories[0]);
+    }
+  }, [categories]);
 
   useEffect(() => {
     if (serviceIdParam && services.length > 0) {
@@ -79,7 +85,7 @@ export const NewOrderPage = () => {
       addToast("Please provide a valid target profile or post URL!", "warning");
       return;
     }
-    if (user.balance < finalPrice) {
+    if ((user?.balance || 0) < finalPrice) {
       addToast("Insufficient wallet balance! Please add funds to your wallet.", "error");
       return;
     }
@@ -89,9 +95,9 @@ export const NewOrderPage = () => {
       updateBalance(-finalPrice);
 
       const createdOrder = addOrder({
-        userName:    user.name,
-        serviceName: currentService.name,
-        serviceId:   currentService.id,
+        userName:    user?.name || "User",
+        serviceName: currentService?.name || "SMM Campaign",
+        serviceId:   currentService?.id || selectedServiceId,
         link:        link.trim(),
         quantity,
         charge:      finalPrice,
@@ -127,7 +133,7 @@ export const NewOrderPage = () => {
         <div className="flex items-center gap-3 glass-panel p-3 rounded-2xl border-slate-200 dark:border-slate-800">
           <div>
             <p className="text-[10px] uppercase font-bold text-slate-400">Available Balance</p>
-            <p className="text-base font-black text-emerald-600 dark:text-emerald-400">{formatCurrency(user.balance)}</p>
+            <p className="text-base font-black text-emerald-600 dark:text-emerald-400">{formatCurrency(user?.balance || 0)}</p>
           </div>
           <Badge variant="indigo">VIP 15% OFF</Badge>
         </div>
@@ -185,8 +191,8 @@ export const NewOrderPage = () => {
                   {currentService.description}
                 </p>
                 <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 pt-1">
-                  <span>Min: <strong className="text-slate-900 dark:text-white">{currentService.min.toLocaleString()}</strong></span>
-                  <span>Max: <strong className="text-slate-900 dark:text-white">{currentService.max.toLocaleString()}</strong></span>
+                  <span>Min: <strong className="text-slate-900 dark:text-white">{currentService.min?.toLocaleString()}</strong></span>
+                  <span>Max: <strong className="text-slate-900 dark:text-white">{currentService.max?.toLocaleString()}</strong></span>
                   <span>Rate/1k: <strong className="text-indigo-600 dark:text-indigo-400">${currentService.rate}</strong></span>
                 </div>
               </div>
@@ -209,15 +215,15 @@ export const NewOrderPage = () => {
                   Quantity
                 </label>
                 <span className="text-xs text-slate-400">
-                  Limits: {currentService.min.toLocaleString()} - {currentService.max.toLocaleString()}
+                  Limits: {currentService ? `${currentService.min?.toLocaleString()} - ${currentService.max?.toLocaleString()}` : "100 - 100,000"}
                 </span>
               </div>
               <input
                 type="number"
-                min={currentService.min}
-                max={currentService.max}
+                min={currentService?.min || 1}
+                max={currentService?.max || 100000}
                 value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value) || currentService.min)}
+                onChange={(e) => setQuantity(parseInt(e.target.value) || currentService?.min || 100)}
                 className="w-full px-4 py-2.5 text-sm rounded-xl bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-bold focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
@@ -276,7 +282,7 @@ export const NewOrderPage = () => {
               <TrendingUp className="w-5 h-5 text-indigo-500" /> Recommended Services
             </CardTitle>
             <div className="space-y-2.5 divide-y divide-slate-100 dark:divide-slate-800">
-              {MOCK_SERVICES.slice(0, 3).map((rec, i) => (
+              {services.slice(0, 3).map((rec, i) => (
                 <div key={i} className="pt-2.5 first:pt-0 flex items-center justify-between text-xs">
                   <div>
                     <p className="font-bold text-slate-800 dark:text-slate-200 line-clamp-1">{rec.name}</p>
