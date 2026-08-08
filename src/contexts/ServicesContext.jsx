@@ -1,26 +1,63 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { CRESCITALY_SERVICES } from "../data/crescitalyServices";
+import { TRUSTYHUB_SERVICES } from "../data/trustyHubServices";
 import { MOCK_SERVICES, CATEGORIES, PLATFORMS } from "../data/mockServices";
 
 const ServicesContext = createContext();
 
+const STORAGE_KEY = "smm_services_db_trusty_crescitaly_v2";
+
+const getCombinedCatalog = () => {
+  const trusty = Array.isArray(TRUSTYHUB_SERVICES) ? TRUSTYHUB_SERVICES : [];
+  const crescitaly = Array.isArray(CRESCITALY_SERVICES) ? CRESCITALY_SERVICES : [];
+  
+  if (trusty.length === 0 && crescitaly.length === 0) return MOCK_SERVICES;
+
+  const idSet = new Set();
+  const list = [];
+
+  for (const s of trusty) {
+    if (!idSet.has(s.id)) {
+      idSet.add(s.id);
+      list.push(s);
+    }
+  }
+
+  for (const s of crescitaly) {
+    let targetId = s.id;
+    if (idSet.has(targetId)) {
+      targetId = s.id + 50000;
+    }
+    idSet.add(targetId);
+    list.push({ ...s, id: targetId });
+  }
+
+  return list;
+};
+
+const INITIAL_CATALOG = getCombinedCatalog();
+
 const getInitialServices = () => {
   try {
-    const saved = localStorage.getItem("smm_services_db");
+    const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 5000) return parsed;
     }
   } catch (e) {
     console.error("Failed to load services from localStorage:", e);
   }
-  return MOCK_SERVICES;
+  return INITIAL_CATALOG;
 };
 
 export const ServicesProvider = ({ children }) => {
   const [services, setServices] = useState(getInitialServices);
 
   useEffect(() => {
-    localStorage.setItem("smm_services_db", JSON.stringify(services));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(services));
+      localStorage.setItem("smm_services_db", JSON.stringify(services));
+    } catch (e) {}
   }, [services]);
 
   const categories = useMemo(() => {
@@ -74,6 +111,19 @@ export const ServicesProvider = ({ children }) => {
     );
   };
 
+  const bulkImportServices = (newServicesList, overwrite = false) => {
+    setServices(prev => {
+      if (overwrite) return newServicesList;
+      const existingIds = new Set(prev.map(s => s.id));
+      const filteredNew = newServicesList.filter(s => !existingIds.has(s.id));
+      return [...filteredNew, ...prev];
+    });
+  };
+
+  const resetServicesToDefault = () => {
+    setServices(INITIAL_CATALOG);
+  };
+
   return (
     <ServicesContext.Provider
       value={{
@@ -84,7 +134,9 @@ export const ServicesProvider = ({ children }) => {
         updateService,
         deleteService,
         toggleServiceStatus,
-        applyGlobalMultiplier
+        applyGlobalMultiplier,
+        bulkImportServices,
+        resetServicesToDefault
       }}
     >
       {children}
