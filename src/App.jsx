@@ -30,6 +30,7 @@ import { ResetPasswordPage } from "./pages/auth/ResetPasswordPage";
 // User Dashboard Pages
 import { UserDashboard } from "./pages/user/UserDashboard";
 import { NewOrderPage } from "./pages/user/NewOrderPage";
+import { MassOrderPage } from "./pages/user/MassOrderPage";
 import { ServicesMarketplace } from "./pages/user/ServicesMarketplace";
 import { GameServicesPage } from "./pages/user/GameServicesPage";
 import { OrdersPage } from "./pages/user/OrdersPage";
@@ -86,6 +87,7 @@ export default function App() {
                             <Route path="/dashboard" element={<UserDashboardLayout />}>
                               <Route index element={<UserDashboard />} />
                               <Route path="new-order" element={<NewOrderPage />} />
+                              <Route path="mass-order" element={<MassOrderPage />} />
                               <Route path="services" element={<ServicesMarketplace />} />
                               <Route path="game-services" element={<GameServicesPage />} />
                               <Route path="orders" element={<OrdersPage />} />

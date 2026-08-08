@@ -19,6 +19,7 @@ export const CommandPalette = () => {
   const commandItems = [
     { label: 'User Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'Navigation' },
     { label: 'New Order Campaign', path: '/dashboard/new-order', icon: ShoppingCart, category: 'Navigation' },
+    { label: 'Mass / Bulk Order Batch Tool', path: '/dashboard/mass-order', icon: Layers, category: 'Navigation' },
     { label: `Services Marketplace (${services.length ? services.length.toLocaleString() : '17,000+'}+)`, path: '/dashboard/services', icon: Sparkles, category: 'Navigation' },
     { label: 'Game Services & Top-Up Store (PUBG, Valorant, Free Fire)', path: '/dashboard/game-services', icon: Gamepad2, category: 'Navigation' },
     { label: 'Order History & Status Tracking', path: '/dashboard/orders', icon: ShoppingCart, category: 'Navigation' },

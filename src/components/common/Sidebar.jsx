@@ -22,6 +22,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
   const userNav = [
     { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, exact: true },
     { label: "New Order", path: "/dashboard/new-order", icon: ShoppingCart, badge: "FAST" },
+    { label: "Mass / Bulk Order", path: "/dashboard/mass-order", icon: Layers, badge: "BULK" },
     { label: "Services", path: "/dashboard/services", icon: Sparkles, badge: "17,000+" },
     { label: "Game Services", path: "/dashboard/game-services", icon: Gamepad2, badge: "HOT" },
     { label: "Orders History", path: "/dashboard/orders", icon: ListOrdered },
