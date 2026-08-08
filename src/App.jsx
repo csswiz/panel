@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Context Providers
@@ -10,6 +10,7 @@ import { OrdersProvider } from "./contexts/OrdersContext";
 import { WalletProvider } from "./contexts/WalletContext";
 import { TicketsProvider } from "./contexts/TicketsContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
+import { ServicesProvider } from "./contexts/ServicesContext";
 
 // Layouts
 import { LandingLayout } from "./layouts/LandingLayout";
@@ -58,56 +59,58 @@ export default function App() {
           <WalletProvider>
             <TicketsProvider>
               <SettingsProvider>
-                <ToastProvider>
-                  <CommandPaletteProvider>
-                    <BrowserRouter>
-                      <Routes>
-                        {/* Landing Website Routes */}
-                        <Route element={<LandingLayout />}>
-                          <Route path="/" element={<LandingPage />} />
-                        </Route>
+                <ServicesProvider>
+                  <ToastProvider>
+                    <CommandPaletteProvider>
+                      <BrowserRouter>
+                        <Routes>
+                          {/* Landing Website Routes */}
+                          <Route element={<LandingLayout />}>
+                            <Route path="/" element={<LandingPage />} />
+                          </Route>
 
-                        {/* Authentication UI Routes */}
-                        <Route path="/auth" element={<AuthLayout />}>
-                          <Route path="login" element={<LoginPage />} />
-                          <Route path="register" element={<RegisterPage />} />
-                          <Route path="forgot-password" element={<ForgotPasswordPage />} />
-                          <Route path="otp" element={<OTPVerifyPage />} />
-                          <Route path="reset-password" element={<ResetPasswordPage />} />
-                        </Route>
+                          {/* Authentication UI Routes */}
+                          <Route path="/auth" element={<AuthLayout />}>
+                            <Route path="login" element={<LoginPage />} />
+                            <Route path="register" element={<RegisterPage />} />
+                            <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                            <Route path="otp" element={<OTPVerifyPage />} />
+                            <Route path="reset-password" element={<ResetPasswordPage />} />
+                          </Route>
 
-                        {/* User Dashboard Routes */}
-                        <Route path="/dashboard" element={<UserDashboardLayout />}>
-                          <Route index element={<UserDashboard />} />
-                          <Route path="new-order" element={<NewOrderPage />} />
-                          <Route path="services" element={<ServicesMarketplace />} />
-                          <Route path="orders" element={<OrdersPage />} />
-                          <Route path="wallet" element={<WalletPage />} />
-                          <Route path="api" element={<APIDocsPage />} />
-                          <Route path="support" element={<SupportPage />} />
-                          <Route path="affiliate" element={<AffiliatePage />} />
-                          <Route path="profile" element={<ProfilePage />} />
-                        </Route>
+                          {/* User Dashboard Routes */}
+                          <Route path="/dashboard" element={<UserDashboardLayout />}>
+                            <Route index element={<UserDashboard />} />
+                            <Route path="new-order" element={<NewOrderPage />} />
+                            <Route path="services" element={<ServicesMarketplace />} />
+                            <Route path="orders" element={<OrdersPage />} />
+                            <Route path="wallet" element={<WalletPage />} />
+                            <Route path="api" element={<APIDocsPage />} />
+                            <Route path="support" element={<SupportPage />} />
+                            <Route path="affiliate" element={<AffiliatePage />} />
+                            <Route path="profile" element={<ProfilePage />} />
+                          </Route>
 
-                        {/* Admin Panel Routes */}
-                        <Route path="/admin" element={<AdminDashboardLayout />}>
-                          <Route index element={<AdminDashboard />} />
-                          <Route path="analytics" element={<AdminAnalytics />} />
-                          <Route path="users" element={<UserManagementPage />} />
-                          <Route path="services" element={<ServiceManagementPage />} />
-                          <Route path="orders" element={<OrderManagementPage />} />
-                          <Route path="financials" element={<FinancialsPage />} />
-                          <Route path="tickets" element={<TicketsAdminPage />} />
-                          <Route path="reports" element={<ReportsPage />} />
-                          <Route path="settings" element={<SettingsAdminPage />} />
-                        </Route>
+                          {/* Admin Panel Routes */}
+                          <Route path="/admin" element={<AdminDashboardLayout />}>
+                            <Route index element={<AdminDashboard />} />
+                            <Route path="analytics" element={<AdminAnalytics />} />
+                            <Route path="users" element={<UserManagementPage />} />
+                            <Route path="services" element={<ServiceManagementPage />} />
+                            <Route path="orders" element={<OrderManagementPage />} />
+                            <Route path="financials" element={<FinancialsPage />} />
+                            <Route path="tickets" element={<TicketsAdminPage />} />
+                            <Route path="reports" element={<ReportsPage />} />
+                            <Route path="settings" element={<SettingsAdminPage />} />
+                          </Route>
 
-                        {/* Fallback 404 Route */}
-                        <Route path="*" element={<NotFoundPage />} />
-                      </Routes>
-                    </BrowserRouter>
-                  </CommandPaletteProvider>
-                </ToastProvider>
+                          {/* Fallback 404 Route */}
+                          <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                      </BrowserRouter>
+                    </CommandPaletteProvider>
+                  </ToastProvider>
+                </ServicesProvider>
               </SettingsProvider>
             </TicketsProvider>
           </WalletProvider>

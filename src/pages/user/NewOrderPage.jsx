@@ -1,10 +1,11 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { useOrders } from "../../contexts/OrdersContext";
 import { useWallet } from "../../contexts/WalletContext";
-import { MOCK_SERVICES, CATEGORIES } from "../../data/mockServices";
+import { useServices } from "../../contexts/ServicesContext";
+import { useSettings } from "../../contexts/SettingsContext";
 import { Card, CardTitle } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -12,7 +13,7 @@ import { Select } from "../../components/ui/Select";
 import { Badge } from "../../components/ui/Badge";
 import { formatCurrency } from "../../utils/formatters";
 import {
-  ShoppingCart, Link as LinkIcon, Sparkles, Zap, CheckCircle2, Clock, ShieldCheck, TrendingUp
+  ShoppingCart, Link as LinkIcon, Sparkles, Zap, CheckCircle2, Clock, ShieldCheck, TrendingUp, AlertTriangle
 } from "lucide-react";
 
 export const NewOrderPage = () => {
@@ -20,40 +21,43 @@ export const NewOrderPage = () => {
   const { addToast } = useToast();
   const { addOrder } = useOrders();
   const { addTransaction } = useWallet();
+  const { services, categories } = useServices();
+  const { maintenanceMode } = useSettings();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const serviceIdParam = searchParams.get("serviceId");
 
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
-  const [selectedServiceId, setSelectedServiceId] = useState(MOCK_SERVICES[0].id);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0] || "Instagram Likes & Views");
+  const [selectedServiceId, setSelectedServiceId] = useState(services[0]?.id || 1001);
   const [link, setLink] = useState("");
   const [quantity, setQuantity] = useState(1000);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (serviceIdParam) {
+    if (serviceIdParam && services.length > 0) {
       const sId = parseInt(serviceIdParam);
-      const found = MOCK_SERVICES.find(s => s.id === sId);
+      const found = services.find(s => s.id === sId);
       if (found) {
         setSelectedCategory(found.category);
         setSelectedServiceId(found.id);
         setQuantity(found.min);
       }
     }
-  }, [serviceIdParam]);
+  }, [serviceIdParam, services]);
 
-  const categoryServices = MOCK_SERVICES.filter(s => s.category === selectedCategory);
-  const currentService = MOCK_SERVICES.find(s => s.id === parseInt(selectedServiceId)) || categoryServices[0] || MOCK_SERVICES[0];
+  const activeServices = services.filter(s => s.status !== "Disabled");
+  const categoryServices = activeServices.filter(s => s.category === selectedCategory);
+  const currentService = services.find(s => s.id === parseInt(selectedServiceId)) || categoryServices[0] || activeServices[0] || services[0];
 
-  const calculatedCharge = parseFloat(((quantity / 1000) * currentService.rate).toFixed(3));
+  const calculatedCharge = currentService ? parseFloat(((quantity / 1000) * currentService.rate).toFixed(3)) : 0;
   const vipDiscount = (calculatedCharge * 0.15).toFixed(3);
   const finalPrice = Math.max(0.01, parseFloat((calculatedCharge - vipDiscount).toFixed(2)));
 
   const handleCategoryChange = (e) => {
     const cat = e.target.value;
     setSelectedCategory(cat);
-    const newServices = MOCK_SERVICES.filter(s => s.category === cat);
+    const newServices = activeServices.filter(s => s.category === cat);
     if (newServices.length > 0) {
       setSelectedServiceId(newServices[0].id);
       setQuantity(newServices[0].min);
@@ -63,7 +67,7 @@ export const NewOrderPage = () => {
   const handleServiceChange = (e) => {
     const servId = parseInt(e.target.value);
     setSelectedServiceId(servId);
-    const serv = MOCK_SERVICES.find(s => s.id === servId);
+    const serv = services.find(s => s.id === servId);
     if (serv) {
       setQuantity(serv.min);
     }
@@ -132,14 +136,20 @@ export const NewOrderPage = () => {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Order Form */}
         <Card className="lg:col-span-2 p-6 space-y-6">
-          <form onSubmit={handleSubmitOrder} className="space-y-6">
+            {maintenanceMode && (
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 text-amber-600 dark:text-amber-400 text-xs font-semibold">
+                <AlertTriangle className="w-5 h-5 shrink-0" />
+                <span>System maintenance mode is currently enabled by Admin. Orders are paused temporarily.</span>
+              </div>
+            )}
+
             <Select
               label="Select Category"
               value={selectedCategory}
               onChange={handleCategoryChange}
               icon={Sparkles}
             >
-              {CATEGORIES.map((cat, idx) => (
+              {categories.map((cat, idx) => (
                 <option key={idx} value={cat}>{cat}</option>
               ))}
             </Select>
@@ -162,22 +172,24 @@ export const NewOrderPage = () => {
             </div>
 
             {/* Highlights Card */}
-            <div className="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/60 space-y-2">
-              <div className="flex items-center justify-between">
-                <Badge variant="indigo" size="sm">{currentService.badge}</Badge>
-                <div className="flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 font-bold">
-                  <Clock className="w-3.5 h-3.5" /> ETA: {currentService.eta}
+            {currentService && (
+              <div className="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <Badge variant="indigo" size="sm">{currentService.badge}</Badge>
+                  <div className="flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 font-bold">
+                    <Clock className="w-3.5 h-3.5" /> ETA: {currentService.eta}
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                  {currentService.description}
+                </p>
+                <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 pt-1">
+                  <span>Min: <strong className="text-slate-900 dark:text-white">{currentService.min.toLocaleString()}</strong></span>
+                  <span>Max: <strong className="text-slate-900 dark:text-white">{currentService.max.toLocaleString()}</strong></span>
+                  <span>Rate/1k: <strong className="text-indigo-600 dark:text-indigo-400">${currentService.rate}</strong></span>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                {currentService.description}
-              </p>
-              <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 pt-1">
-                <span>Min: <strong className="text-slate-900 dark:text-white">{currentService.min.toLocaleString()}</strong></span>
-                <span>Max: <strong className="text-slate-900 dark:text-white">{currentService.max.toLocaleString()}</strong></span>
-                <span>Rate/1k: <strong className="text-indigo-600 dark:text-indigo-400">${currentService.rate}</strong></span>
-              </div>
-            </div>
+            )}
 
             <Input
               label="Target Page / Post Link"

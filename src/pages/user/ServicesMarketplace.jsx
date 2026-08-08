@@ -1,5 +1,5 @@
-﻿import React, { useState, useMemo } from "react";
-import { MOCK_SERVICES, PLATFORMS } from "../../data/mockServices";
+import React, { useState, useMemo } from "react";
+import { useServices } from "../../contexts/ServicesContext";
 import { Card } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 const ITEMS_PER_PAGE = 25;
 
 export const ServicesMarketplace = () => {
+  const { services, platforms } = useServices();
   const [search, setSearch] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState("all");
   const [sortBy, setSortBy] = useState("id-asc");
@@ -21,7 +22,7 @@ export const ServicesMarketplace = () => {
   const navigate = useNavigate();
 
   const filtered = useMemo(() => {
-    let list = MOCK_SERVICES.filter(service => {
+    let list = services.filter(service => {
       const matchesPlatform = selectedPlatform === "all" || service.platform === selectedPlatform;
       const q = search.toLowerCase();
       const matchesSearch = !q ||
@@ -39,7 +40,7 @@ export const ServicesMarketplace = () => {
     });
 
     return list;
-  }, [selectedPlatform, search, sortBy]);
+  }, [services, selectedPlatform, search, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const safePage = Math.min(currentPage, totalPages);
@@ -87,7 +88,7 @@ export const ServicesMarketplace = () => {
 
       {/* Platform Filter Buttons */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-        {PLATFORMS.map(p => (
+        {platforms.map(p => (
           <button
             key={p.id}
             onClick={() => { setSelectedPlatform(p.id); setCurrentPage(1); }}
