@@ -42,7 +42,7 @@ export const AuthLayout = () => {
               <div className="p-1 rounded-full bg-emerald-500/10">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
               </div>
-              <span>250+ High Retention Services Across 18+ Social Platforms</span>
+              <span>17,000+ High Retention Services Across 18+ Social Platforms</span>
             </li>
             <li className="flex items-center gap-3">
               <div className="p-1 rounded-full bg-emerald-500/10">

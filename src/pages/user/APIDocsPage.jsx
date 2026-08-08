@@ -166,7 +166,7 @@ echo $response;
           {[
             { action: "add", title: "Add Order", desc: "Create a new campaign order instantly.", params: "key, action=add, service, link, quantity" },
             { action: "status", title: "Order Status", desc: "Check real-time order start count, remains, and status.", params: "key, action=status, order" },
-            { action: "services", title: "Service List", desc: "Retrieve complete JSON list of 5,000+ services and rates.", params: "key, action=services" },
+            { action: "services", title: "Service List", desc: "Retrieve complete JSON list of 17,000+ services and rates.", params: "key, action=services" },
             { action: "balance", title: "Check User Balance", desc: "Fetch available wallet balance in USD.", params: "key, action=balance" }
           ].map((ep, i) => (
             <Card key={i} className="p-5 space-y-3">

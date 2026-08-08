@@ -152,7 +152,7 @@ export const LandingPage = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-base sm:text-xl text-slate-200 font-medium max-w-3xl mx-auto leading-relaxed drop-shadow-sm"
           >
-            The world's most reliable automated SMM panel powering over 15,000+ agencies, resellers, and digital brands with 250+ services across 18+ platforms.
+            The world's most reliable automated SMM panel powering over 15,000+ agencies, resellers, and digital brands with 17,000+ services across 18+ platforms.
           </motion.p>
 
           <motion.div
@@ -168,7 +168,7 @@ export const LandingPage = () => {
             </Link>
             <Link to="/dashboard/services">
               <Button size="lg" variant="outline" className="gap-2 text-base border-white/30 text-white bg-slate-900/60 hover:bg-slate-800/80 backdrop-blur-md">
-                <Sparkles className="w-5 h-5 text-indigo-400" /> Browse 250+ Services
+                <Sparkles className="w-5 h-5 text-indigo-400" /> Browse 17,000+ Services
               </Button>
             </Link>
           </motion.div>
@@ -182,7 +182,7 @@ export const LandingPage = () => {
           >
             {[
               { label: 'Orders Processed', val: '12.8M+', icon: Clock },
-              { label: 'Active Services', val: '250+', icon: Layers },
+              { label: 'Active Services', val: '17,000+', icon: Layers },
               { label: 'API Response Speed', val: '< 15ms', icon: Cpu },
               { label: 'Uptime SLA', val: '99.99%', icon: ShieldCheck }
             ].map((stat, i) => (
@@ -199,7 +199,7 @@ export const LandingPage = () => {
       {/* Services Showcase Marketplace Section */}
       <section id="services" className="max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
         <div className="text-center space-y-3">
-          <Badge variant="indigo">250+ LIVE SERVICES</Badge>
+          <Badge variant="indigo">17,000+ LIVE SERVICES</Badge>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Explore Enterprise Service Marketplace</h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">
             Instant delivery, automatic refill guarantees, and 24/7 API integration across all major networks.
@@ -306,7 +306,7 @@ export const LandingPage = () => {
                     <p className="text-xs text-indigo-400 font-semibold mt-1">{tier.discount}</p>
                   </div>
                   <ul className="space-y-2.5 text-xs text-slate-300">
-                    <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> Full 250+ Service Access</li>
+                    <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> Full 17,000+ Service Access</li>
                     <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> REST API Key Access</li>
                     <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> 24/7 Priority Support Chat</li>
                     <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> Automated Refill Monitoring</li>
@@ -401,7 +401,7 @@ export const LandingPage = () => {
             <Badge variant="indigo" size="lg">10% Extra Volume Discount</Badge>
             <h4 className="text-xl font-bold text-white mt-1">Reseller VIP Status</h4>
             <p className="text-xs text-slate-300">
-              Spend $500+ monthly volume to unlock 10% instant extra discount on all 250+ services across all platforms.
+              Spend $500+ monthly volume to unlock 10% instant extra discount on all 17,000+ services across all platforms.
             </p>
           </div>
 

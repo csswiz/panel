@@ -14,7 +14,7 @@ export const CommandPalette = () => {
   const commandItems = [
     { label: 'User Dashboard', path: '/dashboard', icon: LayoutDashboard, category: 'User Pages' },
     { label: 'New Order Calculator', path: '/dashboard/new-order', icon: ShoppingCart, category: 'User Pages' },
-    { label: 'Services Marketplace (250+)', path: '/dashboard/services', icon: Sparkles, category: 'User Pages' },
+    { label: 'Services Marketplace (17,000+)', path: '/dashboard/services', icon: Sparkles, category: 'User Pages' },
     { label: 'Order History & Tracking', path: '/dashboard/orders', icon: ShoppingCart, category: 'User Pages' },
     { label: 'Wallet & Fund Deposits', path: '/dashboard/wallet', icon: Wallet, category: 'User Pages' },
     { label: 'API Developer Documentation', path: '/dashboard/api', icon: Code2, category: 'User Pages' },

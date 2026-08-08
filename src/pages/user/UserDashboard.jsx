@@ -49,7 +49,7 @@ export const UserDashboard = () => {
               Welcome back, {user?.name || "Member"}! 👋
             </h1>
             <p className="text-xs sm:text-sm text-indigo-100 max-w-xl">
-              Your panel is operating cleanly. 5,000+ services are live with sub-second order processing speed.
+              Your panel is operating cleanly. 17,000+ services are live with sub-second order processing speed.
             </p>
           </div>
           <div className="flex items-center gap-3">

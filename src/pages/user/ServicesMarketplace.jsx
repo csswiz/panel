@@ -59,7 +59,7 @@ export const ServicesMarketplace = () => {
             <Sparkles className="w-7 h-7 text-indigo-500" /> Services Marketplace & API Catalog
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Browse 5,000+ high-quality social media optimization endpoints with live pricing.
+            Browse 17,000+ high-quality social media optimization endpoints with live pricing.
           </p>
         </div>
 

@@ -37,7 +37,7 @@ export const RegisterPage = () => {
       <div className="space-y-2 text-center lg:text-left">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Create Free Account</h1>
         <p className="text-xs sm:text-sm text-slate-400">
-          Get instant access to 5,000+ social growth services with zero monthly commitment.
+          Get instant access to 17,000+ social growth services with zero monthly commitment.
         </p>
       </div>
 

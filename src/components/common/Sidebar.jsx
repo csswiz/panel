@@ -22,7 +22,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
   const userNav = [
     { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard, exact: true },
     { label: "New Order", path: "/dashboard/new-order", icon: ShoppingCart, badge: "FAST" },
-    { label: "Services", path: "/dashboard/services", icon: Sparkles, badge: "5,000+" },
+    { label: "Services", path: "/dashboard/services", icon: Sparkles, badge: "17,000+" },
     { label: "Orders History", path: "/dashboard/orders", icon: ListOrdered },
     { label: "Add Funds / Wallet", path: "/dashboard/wallet", icon: Wallet },
     { label: "API Docs", path: "/dashboard/api", icon: Code2 },

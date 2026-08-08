@@ -126,7 +126,7 @@ export const NewOrderPage = () => {
             <ShoppingCart className="w-7 h-7 text-indigo-500" /> New Order Campaign
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Choose from 5,000+ instant delivery services with real-time rate calculation.
+            Choose from 17,000+ instant delivery services with real-time rate calculation.
           </p>
         </div>
 
