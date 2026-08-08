@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { SEED_ORDERS } from "../data/mockOrders";
 import { useAuth } from "./AuthContext";
 
