@@ -135,7 +135,8 @@ export const NewOrderPage = () => {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Order Form */}
-        <Card className="lg:col-span-2 p-6 space-y-6">
+        <Card className="lg:col-span-2 p-6">
+          <form onSubmit={handleSubmitOrder} className="space-y-6">
             {maintenanceMode && (
               <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 text-amber-600 dark:text-amber-400 text-xs font-semibold">
                 <AlertTriangle className="w-5 h-5 shrink-0" />
