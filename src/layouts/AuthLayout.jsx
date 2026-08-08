@@ -98,7 +98,7 @@ export const AuthLayout = () => {
         </div>
 
         <div className="text-center text-xs text-slate-500 relative z-10">
-          Wizard SMM OS v3.8 • Strictly Frontend Mock Demo Mode
+          Wizard SMM OS v3.8 • Made By CyberWiz
         </div>
       </div>
     </div>

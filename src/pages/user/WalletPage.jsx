@@ -216,7 +216,7 @@ export const WalletPage = () => {
             <select
               value={selectedMethod.id}
               onChange={(e) => setSelectedMethod(PAYMENT_METHODS.find(m => m.id === e.target.value))}
-              className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold"
+              className="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold custom-dropdown-scroll"
             >
               {PAYMENT_METHODS.map(m => (
                 <option key={m.id} value={m.id}>{m.name} ({m.bonus})</option>

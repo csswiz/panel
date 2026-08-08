@@ -9,11 +9,11 @@ import { useSettings } from "../../contexts/SettingsContext";
 import { Card, CardTitle } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { Select } from "../../components/ui/Select";
+import { CustomSelect } from "../../components/ui/CustomSelect";
 import { Badge } from "../../components/ui/Badge";
 import { formatCurrency } from "../../utils/formatters";
 import {
-  ShoppingCart, Link as LinkIcon, Sparkles, Zap, CheckCircle2, Clock, ShieldCheck, TrendingUp, AlertTriangle
+  ShoppingCart, Link as LinkIcon, Sparkles, Zap, CheckCircle2, Clock, ShieldCheck, TrendingUp, AlertTriangle, Layers
 } from "lucide-react";
 
 export const NewOrderPage = () => {
@@ -21,12 +21,12 @@ export const NewOrderPage = () => {
   const { addToast } = useToast();
   const { addOrder } = useOrders();
   const { addTransaction } = useWallet();
-  const { services = [], categories = [] } = useServices();
+  const { services = [] } = useServices();
   const { maintenanceMode } = useSettings();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const serviceIdParam = searchParams.get("serviceId");
+  const categories = Array.from(new Set(services.map(s => s.category).filter(Boolean)));
 
   const [selectedCategory, setSelectedCategory] = useState(categories[0] || "Instagram Followers - High Quality");
   const [selectedServiceId, setSelectedServiceId] = useState(services[0]?.id || 1001);
@@ -38,19 +38,19 @@ export const NewOrderPage = () => {
     if (categories.length > 0 && !categories.includes(selectedCategory)) {
       setSelectedCategory(categories[0]);
     }
-  }, [categories]);
+  }, [services]);
 
   useEffect(() => {
-    if (serviceIdParam && services.length > 0) {
-      const sId = parseInt(serviceIdParam);
-      const found = services.find(s => s.id === sId);
+    const serviceParam = searchParams.get("serviceId");
+    if (serviceParam) {
+      const found = services.find(s => s.id === parseInt(serviceParam));
       if (found) {
         setSelectedCategory(found.category);
         setSelectedServiceId(found.id);
         setQuantity(found.min);
       }
     }
-  }, [serviceIdParam, services]);
+  }, [searchParams, services]);
 
   const activeServices = services.filter(s => s.status !== "Disabled");
   const categoryServices = activeServices.filter(s => s.category === selectedCategory);
@@ -60,23 +60,51 @@ export const NewOrderPage = () => {
   const vipDiscount = (calculatedCharge * 0.15).toFixed(3);
   const finalPrice = Math.max(0.01, parseFloat((calculatedCharge - vipDiscount).toFixed(2)));
 
-  const handleCategoryChange = (e) => {
-    const cat = e.target.value;
+  const handleCategoryChange = (val) => {
+    const cat = typeof val === "object" ? val.target.value : val;
     setSelectedCategory(cat);
     const newServices = activeServices.filter(s => s.category === cat);
     if (newServices.length > 0) {
       setSelectedServiceId(newServices[0].id);
-      setQuantity(newServices[0].min);
+      setQuantity(newServices[0].min || 1000);
     }
   };
 
-  const handleServiceChange = (e) => {
-    const servId = parseInt(e.target.value);
+  const handleServiceChange = (val) => {
+    const servId = parseInt(typeof val === "object" ? val.target.value : val);
     setSelectedServiceId(servId);
     const serv = services.find(s => s.id === servId);
     if (serv) {
-      setQuantity(serv.min);
+      setQuantity(serv.min || 1000);
     }
+  };
+
+  const handleQuantityChange = (e) => {
+    const val = e.target.value;
+    if (val === "") {
+      setQuantity("");
+      return;
+    }
+    const parsed = parseInt(val, 10);
+    if (!isNaN(parsed)) {
+      setQuantity(parsed);
+    }
+  };
+
+  const handleQuantityBlur = () => {
+    if (!currentService) return;
+    const minVal = currentService.min || 10;
+    const maxVal = currentService.max || 1000000;
+    let num = parseInt(quantity, 10);
+
+    if (isNaN(num) || num < minVal) {
+      num = minVal;
+      addToast(`Quantity set to minimum required cap (${minVal.toLocaleString()})`, "info");
+    } else if (num > maxVal) {
+      num = maxVal;
+      addToast(`Quantity capped to maximum allowed cap (${maxVal.toLocaleString()})`, "warning");
+    }
+    setQuantity(num);
   };
 
   const handleSubmitOrder = (e) => {
@@ -85,6 +113,20 @@ export const NewOrderPage = () => {
       addToast("Please provide a valid target profile or post URL!", "warning");
       return;
     }
+
+    const numQty = parseInt(quantity, 10);
+    const minVal = currentService?.min || 10;
+    const maxVal = currentService?.max || 1000000;
+
+    if (isNaN(numQty) || numQty < minVal) {
+      addToast(`Minimum quantity allowed for this service is ${minVal.toLocaleString()}`, "warning");
+      return;
+    }
+    if (numQty > maxVal) {
+      addToast(`Maximum quantity allowed for this service is ${maxVal.toLocaleString()}`, "warning");
+      return;
+    }
+
     if ((user?.balance || 0) < finalPrice) {
       addToast("Insufficient wallet balance! Please add funds to your wallet.", "error");
       return;
@@ -99,7 +141,7 @@ export const NewOrderPage = () => {
         serviceName: currentService?.name || "SMM Campaign",
         serviceId:   currentService?.id || selectedServiceId,
         link:        link.trim(),
-        quantity,
+        quantity:    numQty,
         charge:      finalPrice,
       });
 
@@ -150,33 +192,26 @@ export const NewOrderPage = () => {
               </div>
             )}
 
-            <Select
+            <CustomSelect
               label="Select Category"
               value={selectedCategory}
+              options={categories}
               onChange={handleCategoryChange}
               icon={Sparkles}
-            >
-              {categories.map((cat, idx) => (
-                <option key={idx} value={cat}>{cat}</option>
-              ))}
-            </Select>
+              placeholder="Search or Select Category..."
+            />
 
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
-                Select Service
-              </label>
-              <select
-                value={selectedServiceId}
-                onChange={handleServiceChange}
-                className="w-full px-4 py-3 text-xs sm:text-sm rounded-xl bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none font-semibold custom-dropdown-scroll"
-              >
-                {categoryServices.map(s => (
-                  <option key={s.id} value={s.id}>
-                    ID #{s.id} - {s.name} - ${s.rate} per 1,000
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CustomSelect
+              label="Select Service"
+              value={selectedServiceId}
+              options={categoryServices.map(s => ({
+                value: s.id,
+                label: `ID #${s.id} - ${s.name} - $${s.rate} per 1,000`
+              }))}
+              onChange={handleServiceChange}
+              icon={Layers}
+              placeholder="Search or Select Service..."
+            />
 
             {/* Highlights Card */}
             {currentService && (
@@ -212,20 +247,28 @@ export const NewOrderPage = () => {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                  Quantity
+                  Quantity (Manual Entry)
                 </label>
-                <span className="text-xs text-slate-400">
-                  Limits: {currentService ? `${currentService.min?.toLocaleString()} - ${currentService.max?.toLocaleString()}` : "100 - 100,000"}
+                <span className="text-xs font-bold text-indigo-400">
+                  Limits: {currentService ? `${currentService.min?.toLocaleString()} min — ${currentService.max?.toLocaleString()} max` : "100 - 100,000"}
                 </span>
               </div>
               <input
                 type="number"
                 min={currentService?.min || 1}
-                max={currentService?.max || 100000}
+                max={currentService?.max || 1000000}
                 value={quantity}
-                onChange={(e) => setQuantity(parseInt(e.target.value) || currentService?.min || 100)}
-                className="w-full px-4 py-2.5 text-sm rounded-xl bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-bold focus:ring-2 focus:ring-indigo-500 outline-none"
+                onChange={handleQuantityChange}
+                onBlur={handleQuantityBlur}
+                placeholder={`Enter custom amount (${currentService?.min || 10} - ${currentService?.max || 100000})`}
+                className="w-full px-4 py-3 text-sm rounded-xl bg-slate-50/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-bold focus:ring-2 focus:ring-indigo-500 outline-none"
+                required
               />
+              {quantity !== "" && currentService && (parseInt(quantity, 10) < currentService.min || parseInt(quantity, 10) > currentService.max) && (
+                <p className="text-xs text-amber-500 font-semibold">
+                  ⚠️ Amount is outside allowed service cap ({currentService.min?.toLocaleString()} to {currentService.max?.toLocaleString()}). Will automatically cap on blur/submit.
+                </p>
+              )}
             </div>
 
             <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-2">

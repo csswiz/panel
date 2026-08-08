@@ -83,8 +83,16 @@ export const Navbar = ({ onToggleSidebar }) => {
           </button>
         </div>
 
-        {/* Right Side: Balance Widget, Theme, Notifications & User Avatar */}
-        <div className="flex items-center gap-3">
+        {/* Right Side: Balance Widget, Mobile Search & User Avatar */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            onClick={openPalette}
+            className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 md:hidden transition-colors"
+            title="Global Search"
+          >
+            <Search className="w-4 h-4 text-indigo-500" />
+          </button>
+
           {!isAdmin && (
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 shadow-sm">
               <div className="flex flex-col text-right">
