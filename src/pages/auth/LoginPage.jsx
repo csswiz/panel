@@ -5,18 +5,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Mail, Lock, ArrowRight } from 'lucide-react';
-
-// Salted SHA-256 hashes for admin credentials ('raghav94' / '098123456')
-const ADMIN_USER_HASH = '5983de63de88ca644366890296fe1c25b3b0cc4617b102584e407bc99bfaf306';
-const ADMIN_PASS_HASH = 'c0d4da474f57a0a64f84d3002ae73751fc833f93f7b37dee3201aedd5812c5f4';
-
-async function hashValue(str) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode('wizard_salt_' + str);
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
+import { verifyAdminCredentials } from '../../utils/security';
 
 export const LoginPage = () => {
   const [identifier, setIdentifier] = useState('');
@@ -32,16 +21,13 @@ export const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      const userHash = await hashValue(identifier.trim().toLowerCase());
-      const passHash = await hashValue(password.trim());
-
-      const isAdminUser = (userHash === ADMIN_USER_HASH && passHash === ADMIN_PASS_HASH);
+      const isAdminUser = await verifyAdminCredentials(identifier, password);
       const roleType = isAdminUser ? 'Admin' : 'User';
 
       login(identifier, password, roleType);
       addToast(
         isAdminUser 
-          ? 'Successfully logged in as Super Administrator!' 
+          ? 'Successfully authenticated as Administrator!' 
           : `Welcome back! Signed in successfully.`, 
         'success'
       );
