@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { StatCard } from "../../components/common/StatCard";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
@@ -23,7 +23,7 @@ export const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Top Executive Header Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-rose-900 via-slate-900 to-indigo-950 border border-rose-500/40 text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xl">
+      <div className="p-6 rounded-3xl bg-linear-to-r from-rose-900 via-slate-900 to-indigo-950 border border-rose-500/40 text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xl">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Badge variant="rose">SUPER ADMIN MODE</Badge>

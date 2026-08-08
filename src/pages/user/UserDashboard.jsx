@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { StatCard } from "../../components/common/StatCard";
@@ -31,10 +31,10 @@ export const UserDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Top Welcome Banner */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 text-white overflow-hidden shadow-xl shadow-indigo-500/15">
+      <div className="relative p-6 sm:p-8 rounded-3xl bg-linear-to-r from-indigo-600 via-blue-600 to-purple-600 text-white overflow-hidden shadow-xl shadow-indigo-500/15">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-indigo-400/15 rounded-full blur-[60px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-violet-400/10 rounded-full blur-[40px] pointer-events-none animate-float-slow" />
+        <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-violet-400/10 rounded-full blur-2xl pointer-events-none animate-float-slow" />
         <div className="absolute inset-0 dot-pattern opacity-10" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -73,7 +73,7 @@ export const UserDashboard = () => {
 
       {/* Announcements Marquee */}
       {MOCK_ANNOUNCEMENTS.length > 0 && (
-        <div className="glass-panel p-4 rounded-2xl border-amber-500/20 bg-amber-500/[0.03] flex items-center gap-3">
+        <div className="glass-panel p-4 rounded-2xl border-amber-500/20 bg-amber-500/3 flex items-center gap-3">
           <div className="p-2 rounded-xl bg-amber-500/15 text-amber-500 shrink-0 shadow-sm">
             <Megaphone className="w-4 h-4 animate-bounce" />
           </div>

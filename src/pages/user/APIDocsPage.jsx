@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { Card, CardTitle } from "../../components/ui/Card";
@@ -100,7 +100,7 @@ echo $response;
       </div>
 
       {/* API Key Card */}
-      <Card className="p-6 space-y-4 bg-gradient-to-br from-slate-900 to-indigo-950 text-white border-indigo-500/40">
+      <Card className="p-6 space-y-4 bg-linear-to-br from-slate-900 to-indigo-950 text-white border-indigo-500/40">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Key className="w-5 h-5 text-indigo-400" />

@@ -11,7 +11,7 @@ export const Card = ({ children, className, glass = true, hover = false, premium
           glass
             ? 'glass-panel'
             : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800 shadow-sm',
-          hover && 'hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/[0.07] dark:hover:shadow-indigo-500/[0.12] hover:border-indigo-500/30 dark:hover:border-indigo-500/30',
+          hover && 'hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/[0.07] dark:hover:shadow-indigo-500/12 hover:border-indigo-500/30 dark:hover:border-indigo-500/30',
           premium && 'glow-border',
           className
         )

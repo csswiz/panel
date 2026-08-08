@@ -118,11 +118,11 @@ export const LandingPage = () => {
         </video>
 
         {/* Ambient Gradient Vignette Overlays for smooth blending */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/20 to-slate-950 pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-b from-slate-950/70 via-slate-950/20 to-slate-950 pointer-events-none" />
         <div className="absolute inset-0 bg-radial-gradient from-transparent via-slate-950/30 to-slate-950/80 pointer-events-none" />
 
         {/* Animated glow ambient background graphics */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-gradient-to-tr from-indigo-600/30 via-blue-600/20 to-purple-600/30 rounded-full blur-[160px] pointer-events-none animate-float-slow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-225 h-125 bg-linear-to-tr from-indigo-600/30 via-blue-600/20 to-purple-600/30 rounded-full blur-[160px] pointer-events-none animate-float-slow" />
 
         {/* Hero Glass Content Container */}
         <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8 p-6 sm:p-12 rounded-3xl bg-slate-950/40 backdrop-blur-md border border-white/15 shadow-2xl shadow-slate-950/80">
@@ -280,12 +280,12 @@ export const LandingPage = () => {
                 premium={tier.popular}
                 className={`p-6 flex flex-col justify-between relative ${
                   tier.popular
-                    ? 'bg-gradient-to-b from-indigo-900/40 via-slate-900 to-slate-900 border-indigo-500/40 shadow-2xl shadow-indigo-500/10'
+                    ? 'bg-linear-to-b from-indigo-900/40 via-slate-900 to-slate-900 border-indigo-500/40 shadow-2xl shadow-indigo-500/10'
                     : 'bg-slate-900/50 border-slate-800/60'
                 }`}
               >
                 {tier.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold text-[10px] uppercase tracking-wider rounded-full shadow-lg shadow-indigo-500/30">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-linear-to-r from-indigo-600 to-blue-600 text-white font-bold text-[10px] uppercase tracking-wider rounded-full shadow-lg shadow-indigo-500/30">
                     MOST POPULAR
                   </span>
                 )}
@@ -367,9 +367,9 @@ export const LandingPage = () => {
 
       {/* CTA Bottom Banner */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="relative rounded-3xl p-8 sm:p-12 bg-gradient-to-r from-indigo-900 via-blue-900 to-purple-900 border border-indigo-500/30 text-center space-y-6 overflow-hidden shadow-2xl shadow-indigo-500/10">
+        <div className="relative rounded-3xl p-8 sm:p-12 bg-linear-to-r from-indigo-900 via-blue-900 to-purple-900 border border-indigo-500/30 text-center space-y-6 overflow-hidden shadow-2xl shadow-indigo-500/10">
           {/* Animated ambient effects */}
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-transparent to-purple-500/5 animate-gradient-x" />
+          <div className="absolute inset-0 bg-linear-to-r from-indigo-500/5 via-transparent to-purple-500/5 animate-gradient-x" />
           <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none animate-float-slow" />
           <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] pointer-events-none animate-float" style={{ animationDelay: '2s' }} />
 

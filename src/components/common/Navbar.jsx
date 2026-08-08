@@ -1,9 +1,8 @@
-﻿import React from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { useCommandPalette } from "../../contexts/CommandPaletteContext";
-import { ThemeToggle } from "./ThemeToggle";
 import { NotificationCenter } from "./NotificationCenter";
 import { formatCurrency } from "../../utils/formatters";
 import { Button } from "../ui/Button";
@@ -52,10 +51,10 @@ export const Navbar = ({ onToggleSidebar }) => {
 
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="relative">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:shadow-xl group-hover:shadow-indigo-500/40 group-hover:scale-105 transition-all duration-300">
+              <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-indigo-600 via-blue-600 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:shadow-xl group-hover:shadow-indigo-500/40 group-hover:scale-105 transition-all duration-300">
                 <Zap className="w-5 h-5 fill-current" />
               </div>
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 blur-lg opacity-20 group-hover:opacity-40 transition-opacity" />
+              <div className="absolute inset-0 rounded-xl bg-linear-to-tr from-indigo-600 to-violet-600 blur-lg opacity-20 group-hover:opacity-40 transition-opacity" />
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
@@ -104,7 +103,6 @@ export const Navbar = ({ onToggleSidebar }) => {
             </div>
           )}
 
-          <ThemeToggle />
           <NotificationCenter />
 
           {/* User Profile Dropdown */}

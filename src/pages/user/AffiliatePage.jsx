@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { MOCK_AFFILIATE_STATS, MOCK_LEADERBOARD, MOCK_COMMISSION_HISTORY } from "../../data/mockAffiliate";
 import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
@@ -51,7 +51,7 @@ export const AffiliatePage = () => {
       </div>
 
       {/* Referral Link Share Card */}
-      <Card className="p-6 bg-gradient-to-r from-indigo-900 via-slate-900 to-slate-900 border-indigo-500/40 text-white space-y-4">
+      <Card className="p-6 bg-linear-to-r from-indigo-900 via-slate-900 to-slate-900 border-indigo-500/40 text-white space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <Badge variant="indigo">10% RECURRING COMMISSION</Badge>

@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { useWallet } from "../../contexts/WalletContext";
@@ -85,7 +85,7 @@ export const WalletPage = () => {
 
       {/* Balance Summary Card */}
       <div className="grid md:grid-cols-3 gap-6">
-        <Card className="p-6 bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-900 border-indigo-500/50 shadow-2xl relative overflow-hidden text-white md:col-span-2">
+        <Card className="p-6 bg-linear-to-br from-indigo-900 via-slate-900 to-slate-900 border-indigo-500/50 shadow-2xl relative overflow-hidden text-white md:col-span-2">
           <div className="flex items-start justify-between relative z-10">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-indigo-300">Available Wallet Balance</span>

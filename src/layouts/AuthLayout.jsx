@@ -1,13 +1,12 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { Zap, ShieldCheck, CheckCircle2 } from 'lucide-react';
-import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export const AuthLayout = () => {
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-slate-950 text-slate-100">
       {/* Left Column - Enterprise Graphic & Testimonials */}
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 relative overflow-hidden border-r border-slate-800/50">
+      <div className="hidden lg:flex flex-col justify-between p-12 bg-linear-to-br from-indigo-950 via-slate-900 to-slate-950 relative overflow-hidden border-r border-slate-800/50">
         {/* Animated ambient glow orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none animate-float-slow" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] pointer-events-none animate-float" style={{ animationDelay: '2s' }} />
@@ -20,7 +19,7 @@ export const AuthLayout = () => {
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-blue-500 flex items-center justify-center text-white shadow-xl shadow-indigo-500/30 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-tr from-indigo-500 to-blue-500 flex items-center justify-center text-white shadow-xl shadow-indigo-500/30 group-hover:scale-105 transition-transform">
                 <Zap className="w-6 h-6 fill-current" />
               </div>
               <div className="absolute inset-0 rounded-xl bg-indigo-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
@@ -61,8 +60,8 @@ export const AuthLayout = () => {
         </div>
 
         {/* Bottom Testimonial Banner */}
-        <div className="relative z-10 p-5 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl shadow-xl">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
+        <div className="relative z-10 p-5 rounded-2xl bg-white/4 border border-white/8 backdrop-blur-xl shadow-xl">
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-indigo-500/5 to-transparent pointer-events-none" />
           <p className="text-xs text-slate-300 italic relative z-10">
             "Wizard SMM enabled our agency to process over 150,000 monthly orders without a single delay. The API uptime is literally flawless."
           </p>
@@ -87,14 +86,11 @@ export const AuthLayout = () => {
 
         <div className="flex items-center justify-between relative z-10">
           <Link to="/" className="lg:hidden flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+            <div className="w-8 h-8 rounded-lg bg-linear-to-tr from-indigo-600 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
               <Zap className="w-5 h-5 fill-current" />
             </div>
             <span className="font-bold text-white">WIZARD</span>
           </Link>
-          <div className="ml-auto">
-            <ThemeToggle />
-          </div>
         </div>
 
         <div className="my-auto py-8 max-w-md w-full mx-auto relative z-10">

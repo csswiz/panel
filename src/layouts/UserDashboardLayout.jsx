@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Navbar } from "../components/common/Navbar";
@@ -22,7 +22,7 @@ export const UserDashboardLayout = () => {
       <div className="flex-1 flex max-w-[1920px] w-full mx-auto relative z-10">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-        <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto max-w-7xl mx-auto w-full flex flex-col justify-between">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full flex flex-col justify-between min-w-0">
           <div>
             <Breadcrumbs />
             <Outlet />

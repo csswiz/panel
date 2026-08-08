@@ -59,7 +59,7 @@ export const CommandPalette = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed top-16 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-indigo-500/15 rounded-full blur-[80px] pointer-events-none"
+            className="fixed top-16 left-1/2 -translate-x-1/2 w-100 h-50 bg-indigo-500/15 rounded-full blur-[80px] pointer-events-none"
           />
 
           <motion.div

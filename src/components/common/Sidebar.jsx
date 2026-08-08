@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
@@ -54,16 +54,16 @@ export const Sidebar = ({ isOpen, onClose }) => {
       )}
 
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-40 w-64 border-r border-slate-200/50 dark:border-slate-800/50 bg-white/92 dark:bg-slate-900/92 backdrop-blur-2xl flex flex-col justify-between transition-transform duration-300 md:translate-x-0 ${
+        className={`fixed md:sticky top-0 md:top-16 h-screen md:h-[calc(100vh-4rem)] left-0 z-40 w-64 shrink-0 border-r border-slate-200/50 dark:border-slate-800/50 bg-white/92 dark:bg-slate-900/92 backdrop-blur-2xl flex flex-col justify-between transition-transform duration-300 md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="p-4 space-y-6 overflow-y-auto">
+        <div className="p-4 space-y-6 flex-1 overflow-y-auto">
           {/* Section Header */}
           <div className="px-3 pt-2">
             <div className="flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-400 uppercase">
               <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-linear-to-r from-indigo-500 to-blue-500" />
                 {isAdmin ? "ADMINISTRATION" : "MAIN MENU"}
               </span>
               <span className="px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 text-[10px] shadow-sm">
@@ -85,7 +85,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                     const active = item.exact ? location.pathname === item.path : linkActive;
                     return `group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 relative ${
                       active
-                        ? "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/25 dark:from-indigo-500 dark:to-indigo-400"
+                        ? "bg-linear-to-r from-indigo-600 to-indigo-500 text-white shadow-lg shadow-indigo-500/25 dark:from-indigo-500 dark:to-indigo-400"
                         : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-100"
                     }`;
                   }}
@@ -116,7 +116,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
           </nav>
 
           {/* Quick Stats Widget */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-500/8 via-purple-500/4 to-blue-500/8 border border-indigo-500/15 shadow-sm relative overflow-hidden">
+          <div className="p-4 rounded-2xl bg-linear-to-br from-indigo-500/8 via-purple-500/4 to-blue-500/8 border border-indigo-500/15 shadow-sm relative overflow-hidden">
             <div className="absolute -top-4 -right-4 w-16 h-16 bg-indigo-500/10 rounded-full blur-2xl" />
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-2">
@@ -130,7 +130,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 API Engine Cluster Node #04: <span className="text-emerald-500 font-semibold">99.99% Operational</span>
               </p>
               <div className="w-full bg-slate-200/80 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-full w-[99.99%] rounded-full" />
+                <div className="bg-linear-to-r from-emerald-500 to-emerald-400 h-full w-[99.99%] rounded-full" />
               </div>
             </div>
           </div>

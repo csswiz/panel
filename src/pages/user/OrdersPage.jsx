@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useOrders } from "../../contexts/OrdersContext";
 import { ORDER_STATUS_COLORS } from "../../data/mockOrders";
@@ -203,7 +203,7 @@ export const OrdersPage = () => {
                         href={order.link}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-indigo-500 hover:underline flex items-center gap-1 text-[11px] truncate max-w-[220px] mt-0.5"
+                        className="text-indigo-500 hover:underline flex items-center gap-1 text-[11px] truncate max-w-55 mt-0.5"
                       >
                         {order.link} <ExternalLink className="w-3 h-3 shrink-0" />
                       </a>
@@ -215,7 +215,7 @@ export const OrdersPage = () => {
                       {(order.startCount ?? 0).toLocaleString()}
                     </td>
                     <td className="p-3">
-                      <div className="space-y-1 min-w-[100px]">
+                      <div className="space-y-1 min-w-25">
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="font-bold text-slate-900 dark:text-white">{(order.quantity ?? 0).toLocaleString()}</span>
                           <span className="text-slate-400">±{(order.remains ?? 0).toLocaleString()}</span>
