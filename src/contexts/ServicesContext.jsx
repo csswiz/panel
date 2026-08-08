@@ -2,26 +2,37 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from "
 import { CRESCITALY_SERVICES } from "../data/crescitalyServices";
 import { TRUSTYHUB_SERVICES } from "../data/trustyHubServices";
 import { VIIEAGENCY_SERVICES } from "../data/viieAgencyServices";
+import { WORLDOFSMM_SERVICES } from "../data/worldOfSmmServices";
 import { MOCK_SERVICES, CATEGORIES, PLATFORMS } from "../data/mockServices";
 
 const ServicesContext = createContext();
 
-const STORAGE_KEY = "smm_services_db_master_v3";
+const STORAGE_KEY = "smm_services_db_master_v4";
 
 const getCombinedCatalog = () => {
+  const world = Array.isArray(WORLDOFSMM_SERVICES) ? WORLDOFSMM_SERVICES : [];
   const viie = Array.isArray(VIIEAGENCY_SERVICES) ? VIIEAGENCY_SERVICES : [];
   const trusty = Array.isArray(TRUSTYHUB_SERVICES) ? TRUSTYHUB_SERVICES : [];
   const crescitaly = Array.isArray(CRESCITALY_SERVICES) ? CRESCITALY_SERVICES : [];
   
-  if (viie.length === 0 && trusty.length === 0 && crescitaly.length === 0) return MOCK_SERVICES;
+  if (world.length === 0 && viie.length === 0 && trusty.length === 0 && crescitaly.length === 0) return MOCK_SERVICES;
 
   const idSet = new Set();
   const list = [];
 
-  for (const s of viie) {
+  for (const s of world) {
     if (!idSet.has(s.id)) {
       idSet.add(s.id);
       list.push(s);
+    }
+  }
+
+  for (const s of viie) {
+    let targetId = s.id;
+    if (idSet.has(targetId)) targetId = s.id + 10000;
+    if (!idSet.has(targetId)) {
+      idSet.add(targetId);
+      list.push({ ...s, id: targetId });
     }
   }
 
