@@ -5,13 +5,13 @@
    ============================================================ */
 
 @layer base {
-  :root {
-    /* Core Surfaces */
-    --bg-primary: #f8fafc;
-    --bg-secondary: #ffffff;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --border-color: #e2e8f0;
+  :root, .dark {
+    /* Core Surfaces — Permanent Dark Mode */
+    --bg-primary: #06080d;
+    --bg-secondary: #0c1019;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #1a2235;
 
     /* Accent Palette */
     --accent-indigo: #6366f1;
@@ -23,30 +23,11 @@
     --accent-cyan: #06b6d4;
 
     /* Surface Layers */
-    --surface-1: rgba(255, 255, 255, 0.85);
-    --surface-2: rgba(248, 250, 252, 0.9);
-    --surface-3: rgba(241, 245, 249, 0.7);
-
-    /* Glow Colors */
-    --glow-indigo: rgba(99, 102, 241, 0.15);
-    --glow-blue: rgba(59, 130, 246, 0.12);
-    --glow-violet: rgba(139, 92, 246, 0.12);
-    --glow-emerald: rgba(16, 185, 129, 0.12);
-  }
-
-  .dark {
-    --bg-primary: #06080d;
-    --bg-secondary: #0c1019;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --border-color: #1a2235;
-
-    /* Surface Layers */
     --surface-1: rgba(12, 16, 25, 0.85);
     --surface-2: rgba(15, 20, 32, 0.9);
     --surface-3: rgba(20, 27, 42, 0.7);
 
-    /* Glow Colors (brighter in dark mode) */
+    /* Glow Colors */
     --glow-indigo: rgba(99, 102, 241, 0.2);
     --glow-blue: rgba(59, 130, 246, 0.15);
     --glow-violet: rgba(139, 92, 246, 0.15);
