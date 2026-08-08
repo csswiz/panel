@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { useCommandPalette } from "../../contexts/CommandPaletteContext";
 import { NotificationCenter } from "./NotificationCenter";
+import { ThemeToggle } from "./ThemeToggle";
 import { formatCurrency } from "../../utils/formatters";
 import { Button } from "../ui/Button";
 import { Dropdown } from "../ui/Dropdown";
@@ -103,6 +104,7 @@ export const Navbar = ({ onToggleSidebar }) => {
             </div>
           )}
 
+          <ThemeToggle />
           <NotificationCenter />
 
           {/* User Profile Dropdown */}
